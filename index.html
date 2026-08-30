@@ -6,168 +6,46 @@
   <title>VaibCod</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- SDK do EmailJS -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
-  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js" type="module"></script>
   <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js" type="module"></script>
   <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js" type="module"></script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-    
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #060911;
-      color: #f8fafc;
-      min-height: 100vh;
-      margin: 0;
-      user-select: none;
-    }
-
-    /* Padrão de grelha subtil de fundo para login */
-    .bg-grid-pattern {
-      background-size: 40px 40px;
-      background-image: 
-        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-    }
-
-    /* Efeitos de iluminação nos cantos */
-    .glow-top-left {
-      position: absolute;
-      top: -10%;
-      left: -10%;
-      width: 50vw;
-      height: 50vw;
-      max-width: 500px;
-      max-height: 500px;
-      background: radial-gradient(circle, rgba(37, 99, 235, 0.25) 0%, rgba(14, 165, 233, 0.08) 45%, rgba(6, 9, 17, 0) 70%);
-      filter: blur(60px);
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    .glow-bottom-right {
-      position: absolute;
-      bottom: -10%;
-      right: -10%;
-      width: 55vw;
-      height: 55vw;
-      max-width: 550px;
-      max-height: 550px;
-      background: radial-gradient(circle, rgba(29, 78, 216, 0.2) 0%, rgba(59, 130, 246, 0.05) 50%, rgba(6, 9, 17, 0) 75%);
-      filter: blur(70px);
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    .card-glass {
-      background: rgba(13, 20, 36, 0.75);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 40px rgba(37, 99, 235, 0.1);
-    }
-
-    .input-dark {
-      background-color: #090e1a;
-      border: 1px solid #1e293b;
-      color: #f8fafc;
-      transition: all 0.2s ease;
-    }
-
-    .input-dark:focus-within {
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 1px #3b82f6, 0 0 15px rgba(59, 130, 246, 0.2);
-    }
-
-    .input-dark.input-error {
-      border-color: #ef4444 !important;
-      box-shadow: 0 0 0 1px #ef4444, 0 0 15px rgba(239, 68, 68, 0.2) !important;
-    }
-
-    .input-dark.input-success {
-      border-color: #10b981 !important;
-      box-shadow: 0 0 0 1px #10b981, 0 0 15px rgba(16, 185, 129, 0.2) !important;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-      transition: all 0.2s ease;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-      box-shadow: 0 0 20px rgba(37, 99, 235, 0.4);
-      transform: translateY(-1px);
-    }
-
-    .btn-primary:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
-
-    /* Estilos do App Principal */
-    .app-sidebar {
-      background-color: #070b14;
-      border-right: 1px solid rgba(255, 255, 255, 0.04);
-    }
-
-    .app-main-menu {
-      background-color: #0b101c;
-    }
-
-    .menu-card-item {
-      background-color: #121827;
-      border: 1px solid rgba(255, 255, 255, 0.03);
-      transition: all 0.2s ease;
-    }
-
-    .menu-card-item:hover {
-      background-color: #162035;
-      border-color: rgba(255, 255, 255, 0.08);
-    }
-
-    .support-card {
-      background: linear-gradient(135deg, #281245 0%, #150d26 100%);
-      border: 1px solid rgba(168, 85, 247, 0.25);
-      transition: all 0.2s ease;
-    }
-
-    .support-card:hover {
-      border-color: rgba(168, 85, 247, 0.45);
-      box-shadow: 0 0 20px rgba(168, 85, 247, 0.15);
-    }
-
-    .bottom-bar {
-      background-color: #070a12;
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .custom-scrollbar::-webkit-scrollbar {
-      width: 4px;
-    }
-
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: #1e293b;
-      border-radius: 4px;
-    }
+    body { font-family: 'Inter', sans-serif; background-color: #060911; color: #f8fafc; min-height: 100vh; margin: 0; user-select: none; }
+    .bg-grid-pattern { background-size: 40px 40px; background-image: linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px); }
+    .glow-top-left { position: absolute; top: -10%; left: -10%; width: 50vw; height: 50vw; max-width: 500px; max-height: 500px; background: radial-gradient(circle, rgba(37, 99, 235, 0.25) 0%, rgba(14, 165, 233, 0.08) 45%, rgba(6, 9, 17, 0) 70%); filter: blur(60px); pointer-events: none; z-index: 1; }
+    .glow-bottom-right { position: absolute; bottom: -10%; right: -10%; width: 55vw; height: 55vw; max-width: 550px; max-height: 550px; background: radial-gradient(circle, rgba(29, 78, 216, 0.2) 0%, rgba(59, 130, 246, 0.05) 50%, rgba(6, 9, 17, 0) 75%); filter: blur(70px); pointer-events: none; z-index: 1; }
+    .card-glass { background: rgba(13, 20, 36, 0.75); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 40px rgba(37, 99, 235, 0.1); }
+    .input-dark { background-color: #090e1a; border: 1px solid #1e293b; color: #f8fafc; transition: all 0.2s ease; }
+    .input-dark:focus-within { border-color: #3b82f6; box-shadow: 0 0 0 1px #3b82f6, 0 0 15px rgba(59, 130, 246, 0.2); }
+    .input-dark.input-error { border-color: #ef4444 !important; box-shadow: 0 0 0 1px #ef4444, 0 0 15px rgba(239, 68, 68, 0.2) !important; }
+    .input-dark.input-success { border-color: #10b981 !important; box-shadow: 0 0 0 1px #10b981, 0 0 15px rgba(16, 185, 129, 0.2) !important; }
+    .btn-primary { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); transition: all 0.2s ease; }
+    .btn-primary:hover:not(:disabled) { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); box-shadow: 0 0 20px rgba(37, 99, 235, 0.4); transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
+    .app-sidebar { background-color: #070b14; border-right: 1px solid rgba(255, 255, 255, 0.04); }
+    .app-main-menu { background-color: #0b101c; }
+    .menu-card-item { background-color: #121827; border: 1px solid rgba(255, 255, 255, 0.03); transition: all 0.2s ease; }
+    .menu-card-item:hover { background-color: #162035; border-color: rgba(255, 255, 255, 0.08); }
+    .support-card { background: linear-gradient(135deg, #281245 0%, #150d26 100%); border: 1px solid rgba(168, 85, 247, 0.25); transition: all 0.2s ease; }
+    .support-card:hover { border-color: rgba(168, 85, 247, 0.45); box-shadow: 0 0 20px rgba(168, 85, 247, 0.15); }
+    .bottom-bar { background-color: #070a12; border-top: 1px solid rgba(255, 255, 255, 0.05); }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
   </style>
 </head>
 <body class="bg-[#060911] min-h-screen flex flex-col justify-between relative">
 
-  <!-- ==========================================
-       TELA 1: LOGIN / CADASTRO
-       ========================================== -->
+  <!-- TELA 1: LOGIN / CADASTRO -->
   <div id="auth-screen" class="bg-grid-pattern fixed inset-0 flex items-center justify-center p-4 text-slate-100 z-30 overflow-y-auto">
-    
     <div class="glow-top-left"></div>
     <div class="glow-bottom-right"></div>
 
     <div id="auth-card" class="w-full max-w-[420px] card-glass rounded-2xl p-6 sm:p-8 relative z-20 overflow-hidden my-auto">
       
-      <!-- Navegação Entrar / Criar Conta -->
       <div class="bg-[#080d1a] p-1 rounded-xl flex mb-8 border border-slate-800/80 shadow-inner">
         <button id="tab-login" onclick="switchTab('login')" class="flex-1 py-2.5 rounded-lg text-sm font-medium transition-all text-white bg-[#1a2436] shadow-sm border border-slate-700/50">
           Entrar
@@ -177,7 +55,7 @@
         </button>
       </div>
 
-      <!-- MÓDULO 1: ENTRAR -->
+      <!-- ENTRAR -->
       <div id="form-login" class="space-y-6">
         <div>
           <p class="text-[11px] font-bold tracking-wider text-blue-400 uppercase mb-1 flex items-center gap-1.5">
@@ -189,7 +67,6 @@
         </div>
 
         <form onsubmit="handleAuth(event, 'login')" class="space-y-4">
-          <!-- E-mail ou Nome de usuário -->
           <div class="space-y-1.5">
             <label class="text-xs font-semibold text-slate-300">E-mail ou Nome de usuário</label>
             <div class="input-dark rounded-xl flex items-center px-3.5 py-3">
@@ -198,7 +75,6 @@
             </div>
           </div>
 
-          <!-- Senha -->
           <div class="space-y-1.5">
             <label class="text-xs font-semibold text-slate-300">Senha</label>
             <div class="input-dark rounded-xl flex items-center px-3.5 py-3">
@@ -210,7 +86,6 @@
             </div>
           </div>
 
-          <!-- Botão Continuar -->
           <button id="btn-login-submit" type="submit" class="w-full btn-primary text-white font-medium py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 text-sm shadow-lg shadow-blue-600/25 mt-2">
             <span id="login-btn-text">Continuar</span>
             <i id="login-btn-icon" data-lucide="arrow-right" class="w-4 h-4"></i>
@@ -218,7 +93,6 @@
           </button>
         </form>
 
-        <!-- Esqueci a Senha -->
         <div class="text-center pt-1">
           <button onclick="openModal()" class="text-xs font-medium text-slate-400 hover:text-blue-400 transition-colors">
             Esqueci minha senha
@@ -226,7 +100,7 @@
         </div>
       </div>
 
-      <!-- MÓDULO 2: CRIAR CONTA -->
+      <!-- CRIAR CONTA -->
       <div id="form-register" class="space-y-6 hidden">
         <div>
           <p class="text-[11px] font-bold tracking-wider text-blue-400 uppercase mb-1 flex items-center gap-1.5">
@@ -238,7 +112,6 @@
         </div>
 
         <form onsubmit="handleAuth(event, 'register')" class="space-y-4">
-          <!-- Username (Apenas Minúsculas) -->
           <div class="space-y-1.5">
             <label class="text-xs font-semibold text-slate-300">Nome de usuário</label>
             <div id="username-container" class="input-dark rounded-xl flex items-center px-3.5 py-3">
@@ -249,7 +122,6 @@
             <p id="username-feedback" class="text-[11px] text-slate-500 transition-all">Use letras minúsculas, números, ponto ou _</p>
           </div>
 
-          <!-- E-mail -->
           <div class="space-y-1.5">
             <label class="text-xs font-semibold text-slate-300">E-mail</label>
             <div id="email-container" class="input-dark rounded-xl flex items-center px-3.5 py-3">
@@ -260,7 +132,6 @@
             <p id="email-feedback" class="text-[11px] text-slate-500 transition-all">Endereço de e-mail para acesso</p>
           </div>
 
-          <!-- Senha -->
           <div class="space-y-1.5">
             <label class="text-xs font-semibold text-slate-300">Senha</label>
             <div class="input-dark rounded-xl flex items-center px-3.5 py-3">
@@ -272,7 +143,6 @@
             </div>
           </div>
 
-          <!-- Botão Continuar -->
           <button id="btn-register-submit" type="submit" class="w-full btn-primary text-white font-medium py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 text-sm shadow-lg shadow-blue-600/25 mt-2">
             <span id="register-btn-text">Continuar</span>
             <i id="register-btn-icon" data-lucide="arrow-right" class="w-4 h-4"></i>
@@ -284,19 +154,11 @@
     </div>
   </div>
 
-
-  <!-- ==========================================
-       TELA 2: TELA PRINCIPAL (IMAGEM 7826.JPG)
-       ========================================== -->
+  <!-- TELA 2: TELA PRINCIPAL -->
   <div id="main-app-screen" class="hidden fixed inset-0 z-40 bg-[#060911] flex flex-col h-full w-full overflow-hidden">
-    
-    <!-- ÁREA CENTRAL DE CONTEÚDO -->
     <div class="flex-1 flex overflow-hidden">
       
-      <!-- BARRA LATERAL ESQUERDA (SIDEBAR) -->
       <aside class="w-[72px] app-sidebar flex flex-col items-center py-4 gap-3 shrink-0 z-10">
-        
-        <!-- Botão VaibCod (Ativo) -->
         <div class="relative group">
           <div class="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-blue-500 rounded-r-full"></div>
           <button class="w-12 h-12 rounded-2xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-600/30 hover:rounded-xl transition-all">
@@ -309,28 +171,21 @@
           </button>
         </div>
 
-        <!-- Botão + (Criar Servidor) -->
         <button onclick="openCreateServerModal()" class="w-12 h-12 rounded-2xl bg-[#0f1624] hover:bg-blue-600/20 border border-slate-800 hover:border-blue-500/50 flex items-center justify-center text-blue-400 hover:rounded-xl transition-all group" title="Criar Servidor">
           <i data-lucide="plus" class="w-6 h-6 group-hover:scale-110 transition-transform"></i>
         </button>
 
-        <!-- Botão Seta (Entrar em Servidor) -->
         <button onclick="openJoinServerModal()" title="Entrar em um servidor" class="w-12 h-12 rounded-2xl bg-[#0f1624] hover:bg-blue-600/20 border border-slate-800 hover:border-blue-500/50 flex items-center justify-center text-blue-400 hover:rounded-xl transition-all group">
           <i data-lucide="log-in" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
         </button>
-
       </aside>
 
-      <!-- PAINEL DE MENSAGENS (SCROLL INTERNO COM ESPAÇO PARA O RODAPÉ FIXO) -->
       <main class="flex-1 app-main-menu flex flex-col p-4 sm:p-6 overflow-y-auto custom-scrollbar pb-28">
-        
         <div class="flex items-center justify-between mb-5">
           <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white">Mensagens</h1>
         </div>
 
         <div class="space-y-2.5 max-w-xl">
-          
-          <!-- Item 1: Amigos -->
           <button onclick="showToast('Lista de amigos em breve!')" class="w-full menu-card-item rounded-xl p-3.5 flex items-center gap-3 text-left group">
             <div class="w-9 h-9 rounded-lg bg-slate-800/80 flex items-center justify-center text-slate-300 group-hover:text-white transition-colors">
               <i data-lucide="user-plus" class="w-4 h-4"></i>
@@ -338,7 +193,6 @@
             <span class="font-medium text-slate-200 text-sm group-hover:text-white">Amigos</span>
           </button>
 
-          <!-- Item 2: Loja -->
           <button onclick="showToast('Loja VaibCod em breve!')" class="w-full menu-card-item rounded-xl p-3.5 flex items-center justify-between text-left group">
             <div class="flex items-center gap-3">
               <div class="w-9 h-9 rounded-lg bg-slate-800/80 flex items-center justify-center text-slate-300 group-hover:text-white transition-colors">
@@ -346,12 +200,9 @@
               </div>
               <span class="font-medium text-slate-200 text-sm group-hover:text-white">Loja</span>
             </div>
-            <span class="px-2 py-0.5 rounded bg-blue-600/20 border border-blue-500/30 text-blue-400 text-[9px] font-bold tracking-wider uppercase">
-              PROMO
-            </span>
+            <span class="px-2 py-0.5 rounded bg-blue-600/20 border border-blue-500/30 text-blue-400 text-[9px] font-bold tracking-wider uppercase">PROMO</span>
           </button>
 
-          <!-- Item 3: Apoiar o VaibCod -->
           <button onclick="showToast('Obrigado pelo apoio ao VaibCod!')" class="w-full support-card rounded-xl p-3.5 flex items-center justify-between text-left group">
             <div class="flex items-center gap-3">
               <div class="w-9 h-9 rounded-lg bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-300">
@@ -359,14 +210,10 @@
               </div>
               <span class="font-medium text-purple-100 text-sm">Apoiar o VaibCod</span>
             </div>
-            <span class="px-2 py-0.5 rounded bg-purple-900/60 border border-purple-400/40 text-purple-300 text-[9px] font-bold tracking-wider uppercase">
-              AJUDE
-            </span>
+            <span class="px-2 py-0.5 rounded bg-purple-900/60 border border-purple-400/40 text-purple-300 text-[9px] font-bold tracking-wider uppercase">AJUDE</span>
           </button>
-
         </div>
 
-        <!-- MENSAGENS DIRETAS -->
         <div class="mt-6 max-w-xl">
           <div class="flex items-center justify-between mb-2.5 px-1">
             <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Mensagens Diretas</span>
@@ -380,27 +227,18 @@
             <span>Sua caixa de mensagens diretas está vazia.</span>
           </div>
         </div>
-
       </main>
     </div>
 
-    <!-- RODAPÉ FIXO NA BASE (NÃO SOME NUNCA) -->
     <footer class="absolute bottom-0 left-0 right-0 h-16 bottom-bar px-3 sm:px-4 flex items-center justify-between shrink-0 z-30 shadow-2xl">
-      
-      <!-- PERFIL DO USUÁRIO (CLIQUE PARA SAIR / LOGOUT) -->
       <div class="flex items-center gap-2.5">
-        <div class="relative cursor-pointer" onclick="handleLogout()" title="Clique para sair da conta">
-          <div id="user-avatar-initial" class="w-9 h-9 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-xs border border-blue-400/40">
-            M
-          </div>
+        <div class="relative cursor-pointer" onclick="handleLogout()" title="Clique para encerrar a sessão">
+          <div id="user-avatar-initial" class="w-9 h-9 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-xs border border-blue-400/40">M</div>
           <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-[#070a12] rounded-full"></span>
         </div>
       </div>
 
-      <!-- CAIXA ÚNICA UNIFICADA -->
       <div class="bg-[#101726] border border-slate-800/90 rounded-xl p-1 flex items-center gap-1 shadow-inner">
-        
-        <!-- Microfone -->
         <button id="btn-mic" onclick="toggleAudioState('mic')" title="Alternar Microfone" class="px-2 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all flex items-center gap-1 group">
           <i id="icon-mic" data-lucide="mic" class="w-4 h-4"></i>
           <i data-lucide="chevron-down" class="w-3 h-3 text-slate-500 group-hover:text-slate-300"></i>
@@ -408,7 +246,6 @@
 
         <div class="w-[1px] h-3.5 bg-slate-800"></div>
 
-        <!-- Fone / Auscultadores -->
         <button id="btn-headphones" onclick="toggleAudioState('headphones')" title="Alternar Áudio" class="px-2 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all flex items-center gap-1 group">
           <i id="icon-headphones" data-lucide="headphones" class="w-4 h-4"></i>
           <i data-lucide="chevron-down" class="w-3 h-3 text-slate-500 group-hover:text-slate-300"></i>
@@ -416,24 +253,16 @@
 
         <div class="w-[1px] h-3.5 bg-slate-800"></div>
 
-        <!-- Configurações -->
         <button onclick="showToast('Configurações do aplicativo!')" title="Configurações" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all">
           <i data-lucide="settings" class="w-4 h-4"></i>
         </button>
-
       </div>
-
     </footer>
-
   </div>
 
-
-  <!-- ==========================================
-       MODAL: CRIAR SERVIDOR
-       ========================================== -->
+  <!-- MODAL: CRIAR SERVIDOR -->
   <div id="create-server-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-start sm:items-center justify-center p-4 pt-16 sm:pt-4 z-50 hidden opacity-0 transition-opacity duration-200">
     <div class="w-full max-w-[420px] bg-[#0c1220] border border-slate-800/90 rounded-2xl p-6 shadow-2xl relative text-slate-100">
-      
       <button onclick="closeCreateServerModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white transition-colors">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
@@ -444,7 +273,6 @@
       </div>
 
       <form onsubmit="handleCreateServerSubmit(event)" class="space-y-4">
-        
         <input type="file" id="server-image-file" accept="image/*" class="hidden" onchange="previewServerImage(event)">
 
         <div class="flex flex-col items-center justify-center my-3">
@@ -462,30 +290,19 @@
           </div>
         </div>
 
-        <p class="text-[11px] text-slate-400 leading-relaxed">
-          Você pode criar no máximo 5 servidores. Todos são acessíveis somente por convite.
-        </p>
+        <p class="text-[11px] text-slate-400 leading-relaxed">Você pode criar no máximo 5 servidores. Todos são acessíveis somente por convite.</p>
 
         <div class="flex items-center justify-end gap-3 pt-2">
-          <button type="button" onclick="closeCreateServerModal()" class="px-5 py-2.5 text-xs font-semibold text-slate-300 hover:text-white transition-colors">
-            Cancelar
-          </button>
-          <button type="submit" class="btn-primary px-6 py-2.5 rounded-xl text-xs font-bold text-white shadow-md shadow-blue-600/30">
-            Criar
-          </button>
+          <button type="button" onclick="closeCreateServerModal()" class="px-5 py-2.5 text-xs font-semibold text-slate-300 hover:text-white transition-colors">Cancelar</button>
+          <button type="submit" class="btn-primary px-6 py-2.5 rounded-xl text-xs font-bold text-white shadow-md shadow-blue-600/30">Criar</button>
         </div>
       </form>
-
     </div>
   </div>
 
-
-  <!-- ==========================================
-       MODAL: ENTRAR EM UM SERVIDOR
-       ========================================== -->
+  <!-- MODAL: ENTRAR EM UM SERVIDOR -->
   <div id="join-server-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-start sm:items-center justify-center p-4 pt-16 sm:pt-4 z-50 hidden opacity-0 transition-opacity duration-200">
     <div class="w-full max-w-[420px] bg-[#0c1220] border border-slate-800/90 rounded-2xl p-6 shadow-2xl relative text-slate-100">
-      
       <button onclick="closeJoinServerModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white transition-colors">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
@@ -503,20 +320,14 @@
         </div>
 
         <div class="flex items-center justify-end gap-3 pt-2">
-          <button type="button" onclick="closeJoinServerModal()" class="px-5 py-2.5 text-xs font-semibold text-slate-300 hover:text-white transition-colors">
-            Cancelar
-          </button>
-          <button type="submit" class="btn-primary px-6 py-2.5 rounded-xl text-xs font-bold text-white shadow-md shadow-blue-600/30">
-            Entrar
-          </button>
+          <button type="button" onclick="closeJoinServerModal()" class="px-5 py-2.5 text-xs font-semibold text-slate-300 hover:text-white transition-colors">Cancelar</button>
+          <button type="submit" class="btn-primary px-6 py-2.5 rounded-xl text-xs font-bold text-white shadow-md shadow-blue-600/30">Entrar</button>
         </div>
       </form>
-
     </div>
   </div>
 
-
-  <!-- MODAL DE RECUPERAR ACESSO (EMAILJS) -->
+  <!-- MODAL DE RECUPERAR ACESSO -->
   <div id="recovery-modal" class="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden opacity-0 transition-opacity duration-200">
     <div class="w-full max-w-[380px] bg-[#0b1220] border border-slate-800 rounded-2xl p-6 shadow-2xl relative">
       <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors">
@@ -536,9 +347,7 @@
         </div>
 
         <div class="flex items-center justify-end gap-3 pt-2">
-          <button type="button" onclick="closeModal()" class="px-4 py-2.5 text-xs font-semibold text-slate-300 hover:text-white transition-colors">
-            Cancelar
-          </button>
+          <button type="button" onclick="closeModal()" class="px-4 py-2.5 text-xs font-semibold text-slate-300 hover:text-white transition-colors">Cancelar</button>
           <button type="submit" id="btn-recovery-submit" class="btn-primary px-4 py-2.5 rounded-xl text-xs font-semibold text-white shadow-md shadow-blue-600/20 flex items-center gap-2">
             <span id="recovery-btn-text">Enviar link</span>
             <div id="recovery-spinner" class="hidden w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
@@ -548,7 +357,7 @@
     </div>
   </div>
 
-  <!-- NOTIFICAÇÃO TOAST -->
+  <!-- TOAST -->
   <div id="toast" class="fixed bottom-20 right-5 bg-blue-600 text-white px-4 py-3 rounded-xl shadow-lg border border-blue-400/30 flex items-center gap-3 translate-y-20 opacity-0 transition-all duration-300 z-50">
     <i id="toast-icon" data-lucide="info" class="w-5 h-5"></i>
     <span id="toast-message" class="text-sm font-medium"></span>
@@ -557,9 +366,8 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, doc, setDoc, getDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getFirestore, collection, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // Configuração do Firebase Firestore
     const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
       apiKey: "demo-api-key",
       authDomain: "vaibcod-demo.firebaseapp.com",
@@ -573,9 +381,7 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'vaibcod-app';
-    const usersCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'users');
 
-    // Configuração do EmailJS
     const EMAILJS_PUBLIC_KEY = "YOUR_PUBLIC_KEY"; 
     const EMAILJS_SERVICE_ID = "YOUR_SERVICE_ID";
     const EMAILJS_TEMPLATE_ID = "YOUR_TEMPLATE_ID";
@@ -588,14 +394,66 @@
 
     let userServersCount = 0;
     let selectedServerImage = null;
-
     let checkUserTimeout = null;
     let checkEmailTimeout = null;
-
     let isMicMuted = false;
     let isDeafened = false;
+    let currentUserSession = null;
+    let toastTimeout = null;
 
-    // Autenticação inicial anónima ou custom token no Firebase
+    const memoryDatabase = {};
+
+    window.registrarUsuario = function(username, email, password) {
+      const cleanUser = username.trim().toLowerCase();
+      const cleanEmail = email.trim().toLowerCase();
+
+      if (memoryDatabase[cleanUser]) {
+        return { success: false, message: 'Este nome de usuário já está em uso.' };
+      }
+
+      for (let key in memoryDatabase) {
+        if (memoryDatabase[key].email === cleanEmail) {
+          return { success: false, message: 'Conta já registrada com este e-mail.' };
+        }
+      }
+
+      memoryDatabase[cleanUser] = {
+        username: cleanUser,
+        email: cleanEmail,
+        password: password,
+        createdAt: new Date().toISOString()
+      };
+
+      return { success: true, message: 'Conta criada com sucesso!' };
+    };
+
+    window.fazerLogin = function(identifier, password) {
+      const cleanIdentifier = identifier.trim().toLowerCase();
+      let foundUser = null;
+
+      if (memoryDatabase[cleanIdentifier]) {
+        foundUser = memoryDatabase[cleanIdentifier];
+      } else {
+        for (let key in memoryDatabase) {
+          if (memoryDatabase[key].email === cleanIdentifier) {
+            foundUser = memoryDatabase[key];
+            break;
+          }
+        }
+      }
+
+      if (foundUser && foundUser.password === password) {
+        currentUserSession = foundUser;
+        return { 
+          success: true, 
+          message: 'Login realizado com sucesso!', 
+          user: { username: foundUser.username, email: foundUser.email } 
+        };
+      }
+
+      return { success: false, message: 'E-mail, usuário ou senha incorretos.' };
+    };
+
     const initAuth = async () => {
       try {
         if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -608,13 +466,10 @@
       }
     };
 
-    // DOMContentLoaded: Inicia sempre limpo na tela de login (sem auto-login por enquanto)
     window.addEventListener('DOMContentLoaded', async () => {
       await initAuth();
-      localStorage.removeItem('vaibcod_active_user');
     });
 
-    // Sistema de Preview de Imagem/GIF ao Criar Servidor
     window.previewServerImage = function(event) {
       const file = event.target.files[0];
       if (file) {
@@ -623,7 +478,6 @@
           selectedServerImage = e.target.result;
           const previewImg = document.getElementById('server-image-preview');
           const cameraIcon = document.getElementById('server-camera-icon');
-          
           previewImg.src = selectedServerImage;
           previewImg.classList.remove('hidden');
           cameraIcon.classList.add('hidden');
@@ -632,7 +486,6 @@
       }
     }
 
-    // Modal Criar Servidor
     window.openCreateServerModal = function() {
       const modal = document.getElementById('create-server-modal');
       modal.classList.remove('hidden');
@@ -654,20 +507,17 @@
 
     window.handleCreateServerSubmit = function(event) {
       event.preventDefault();
-      
       if (userServersCount >= 5) {
         closeCreateServerModal();
         showToast('Você atingiu o limite máximo de 5 servidores.', false);
         return;
       }
-
       const serverName = document.getElementById('server-name-input').value.trim();
       userServersCount++;
       closeCreateServerModal();
       showToast(`Servidor "${serverName}" criado com sucesso! (${userServersCount}/5)`);
     }
 
-    // Modal Entrar em Servidor
     window.openJoinServerModal = function() {
       const modal = document.getElementById('join-server-modal');
       modal.classList.remove('hidden');
@@ -690,7 +540,6 @@
       showToast(`Entrando no servidor: ${inviteCode}`);
     }
 
-    // Alternar Abas Auth
     window.switchTab = function(tab) {
       const loginForm = document.getElementById('form-login');
       const registerForm = document.getElementById('form-register');
@@ -710,11 +559,9 @@
       }
     }
 
-    // Toggle de Senha
     window.togglePasswordVisibility = function(inputId, iconId) {
       const input = document.getElementById(inputId);
       const icon = document.getElementById(iconId);
-
       if (input.type === 'password') {
         input.type = 'text';
         icon.setAttribute('data-lucide', 'eye-off');
@@ -725,22 +572,17 @@
       lucide.createIcons();
     }
 
-    // Input Apenas Minúsculas para Username
     window.handleUsernameInput = function(input) {
       const lowerVal = input.value.toLowerCase();
-      if (input.value !== lowerVal) {
-        input.value = lowerVal;
-      }
+      if (input.value !== lowerVal) input.value = lowerVal;
       checkUsernameAvailability();
     }
 
-    // Verificação de Nome de Utilizador (Com atraso exato de 1 segundo)
     window.checkUsernameAvailability = function() {
       const input = document.getElementById('register-username');
       const container = document.getElementById('username-container');
       const feedback = document.getElementById('username-feedback');
       const iconContainer = document.getElementById('username-status-icon');
-      
       const val = input.value.trim().toLowerCase();
       const pattern = /^[a-z0-9._]+$/;
 
@@ -767,17 +609,8 @@
       feedback.className = "text-[11px] text-blue-400 font-medium transition-all";
       iconContainer.innerHTML = `<div class="w-3.5 h-3.5 border-2 border-blue-400/30 border-t-blue-400 rounded-full animate-spin"></div>`;
 
-      // Debounce de 1 segundo (1000ms)
-      checkUserTimeout = setTimeout(async () => {
-        let isTaken = false;
-        try {
-          const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', val);
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists()) isTaken = true;
-        } catch (e) {
-          console.warn("Erro ao verificar username:", e);
-        }
-
+      checkUserTimeout = setTimeout(() => {
+        let isTaken = memoryDatabase[val] ? true : false;
         if (isTaken) {
           container.className = "input-dark input-error rounded-xl flex items-center px-3.5 py-3";
           feedback.textContent = "Este nome de usuário já está em uso.";
@@ -790,16 +623,14 @@
           iconContainer.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>`;
         }
         lucide.createIcons();
-      }, 1000);
+      }, 300);
     }
 
-    // Verificação de E-mail (Com atraso exato de 1 segundo)
     window.checkEmailAvailability = function() {
       const input = document.getElementById('register-email');
       const container = document.getElementById('email-container');
       const feedback = document.getElementById('email-feedback');
       const iconContainer = document.getElementById('email-status-icon');
-
       const val = input.value.trim().toLowerCase();
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -826,21 +657,18 @@
       feedback.className = "text-[11px] text-blue-400 font-medium transition-all";
       iconContainer.innerHTML = `<div class="w-3.5 h-3.5 border-2 border-blue-400/30 border-t-blue-400 rounded-full animate-spin"></div>`;
 
-      // Debounce de 1 segundo (1000ms)
-      checkEmailTimeout = setTimeout(async () => {
+      checkEmailTimeout = setTimeout(() => {
         let isTaken = false;
-        try {
-          const snapshot = await getDocs(usersCollectionRef);
-          snapshot.forEach(docSnap => {
-            if (docSnap.data().email.toLowerCase() === val) isTaken = true;
-          });
-        } catch (e) {
-          console.warn("Erro ao verificar email:", e);
+        for (let key in memoryDatabase) {
+          if (memoryDatabase[key].email === val) {
+            isTaken = true;
+            break;
+          }
         }
 
         if (isTaken) {
           container.className = "input-dark input-error rounded-xl flex items-center px-3.5 py-3";
-          feedback.textContent = "Este e-mail já possui uma conta.";
+          feedback.textContent = "Conta já registrada com este e-mail.";
           feedback.className = "text-[11px] text-red-400 font-medium transition-all";
           iconContainer.innerHTML = `<i data-lucide="x-circle" class="w-4 h-4 text-red-400"></i>`;
         } else {
@@ -850,10 +678,9 @@
           iconContainer.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>`;
         }
         lucide.createIcons();
-      }, 1000);
+      }, 300);
     }
 
-    // Modal de Recuperação
     window.openModal = function() {
       const modal = document.getElementById('recovery-modal');
       modal.classList.remove('hidden');
@@ -882,43 +709,49 @@
 
       toastMessage.textContent = message;
 
-      setTimeout(() => {
+      if (toastTimeout) clearTimeout(toastTimeout);
+
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
         toast.classList.add('translate-y-20', 'opacity-0');
-      }, 3500);
+      }, 1000);
     }
 
-    // Abre a tela principal
     window.openMainApp = function(username) {
       document.getElementById('auth-screen').classList.add('hidden');
       document.getElementById('main-app-screen').classList.remove('hidden');
-
       const userClean = username || 'M';
       document.getElementById('user-avatar-initial').textContent = userClean.charAt(0).toUpperCase();
-
       lucide.createIcons();
     }
 
-    // Sistema de Sair da Conta (Logout)
     window.handleLogout = function() {
-      localStorage.removeItem('vaibcod_active_user');
-      
-      document.getElementById('register-username').value = '';
-      document.getElementById('register-email').value = '';
-      document.getElementById('register-password').value = '';
-      document.getElementById('login-identifier').value = '';
-      document.getElementById('login-password').value = '';
+      currentUserSession = null;
+
+      const regUser = document.getElementById('register-username');
+      const regEmail = document.getElementById('register-email');
+      const regPass = document.getElementById('register-password');
+      const logId = document.getElementById('login-identifier');
+      const logPass = document.getElementById('login-password');
+
+      if (regUser) { regUser.value = ''; regUser.dispatchEvent(new Event('input')); }
+      if (regEmail) { regEmail.value = ''; regEmail.dispatchEvent(new Event('input')); }
+      if (regPass) regPass.value = '';
+      if (logId) logId.value = '';
+      if (logPass) logPass.value = '';
 
       document.getElementById('main-app-screen').classList.add('hidden');
       document.getElementById('auth-screen').classList.remove('hidden');
+
+      switchTab('login');
+      showToast('Sessão de login finalizada com sucesso!');
     }
 
-    // Controlos de Áudio
     window.toggleAudioState = function(type) {
       if (type === 'mic') {
         isMicMuted = !isMicMuted;
         const btn = document.getElementById('btn-mic');
         const icon = document.getElementById('icon-mic');
-        
         if (isMicMuted) {
           btn.classList.add('text-red-400');
           icon.setAttribute('data-lucide', 'mic-off');
@@ -931,7 +764,6 @@
       } else {
         isDeafened = !isDeafened;
         const btn = document.getElementById('btn-headphones');
-        
         if (isDeafened) {
           btn.classList.add('text-red-400');
           showToast('Áudio desativado');
@@ -943,12 +775,11 @@
       lucide.createIcons();
     }
 
-    // Handlers do Formulário (Login e Registo com Gravação Blindada no Firestore)
     window.handleAuth = async function(event, type) {
       event.preventDefault();
 
       if (type === 'login') {
-        const identifier = document.getElementById('login-identifier').value.trim().toLowerCase();
+        const identifier = document.getElementById('login-identifier').value.trim();
         const password = document.getElementById('login-password').value;
         const btn = document.getElementById('btn-login-submit');
         const btnText = document.getElementById('login-btn-text');
@@ -962,51 +793,23 @@
         icon.classList.add('hidden');
         spinner.classList.remove('hidden');
 
-        try {
-          let foundUser = null;
-          
-          // Tenta buscar diretamente pelo ID do documento (username)
-          const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', identifier);
-          const docSnap = await getDoc(docRef);
-          
-          if (docSnap.exists() && docSnap.data().password === password) {
-            foundUser = docSnap.data().username;
-          } else {
-            // Se não achar por ID, varre a coleção procurando por e-mail ou username
-            const snapshot = await getDocs(usersCollectionRef);
-            snapshot.forEach(docSnap => {
-              const data = docSnap.data();
-              if ((data.email.toLowerCase() === identifier || data.username.toLowerCase() === identifier) && data.password === password) {
-                foundUser = data.username;
-              }
-            });
-          }
+        const result = fazerLogin(identifier, password);
 
-          if (foundUser) {
-            btn.disabled = false;
-            btnText.textContent = "Continuar";
-            icon.classList.remove('hidden');
-            spinner.classList.add('hidden');
-            openMainApp(foundUser);
-          } else {
-            btn.disabled = false;
-            btnText.textContent = "Continuar";
-            icon.classList.remove('hidden');
-            spinner.classList.add('hidden');
-            showToast('Utilizador ou senha incorretos!', false);
-          }
-        } catch (err) {
-          console.error("Erro no login:", err);
-          btn.disabled = false;
-          btnText.textContent = "Continuar";
-          icon.classList.remove('hidden');
-          spinner.classList.add('hidden');
-          showToast('Erro de conexão ao entrar.', false);
+        btn.disabled = false;
+        btnText.textContent = "Continuar";
+        icon.classList.remove('hidden');
+        spinner.classList.add('hidden');
+
+        if (result.success) {
+          showToast(result.message);
+          openMainApp(result.user.username);
+        } else {
+          showToast(result.message, false);
         }
 
       } else {
-        const username = document.getElementById('register-username').value.trim().toLowerCase();
-        const email = document.getElementById('register-email').value.trim().toLowerCase();
+        const username = document.getElementById('register-username').value.trim();
+        const email = document.getElementById('register-email').value.trim();
         const password = document.getElementById('register-password').value;
 
         if (!username || !email || !password) return;
@@ -1017,83 +820,48 @@
         const spinner = document.getElementById('register-spinner');
 
         btn.disabled = true;
-        btnText.textContent = "A verificar...";
+        btnText.textContent = "A criar...";
         icon.classList.add('hidden');
         spinner.classList.remove('hidden');
 
+        const result = registrarUsuario(username, email, password);
+
         try {
-          // Verifica se o username já existe no Firestore
-          const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', username);
-          const docSnap = await getDoc(userDocRef);
+          const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', username.toLowerCase());
+          await Promise.race([
+            setDoc(userDocRef, { username, email, password, createdAt: new Date().toISOString() }),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout Firestore')), 2500))
+          ]);
+        } catch (e) {
+          console.warn("Aviso: Salvamento remoto ignorado, usando modo local.", e);
+        }
 
-          if (docSnap.exists()) {
-            btn.disabled = false;
-            btnText.textContent = "Continuar";
-            icon.classList.remove('hidden');
-            spinner.classList.add('hidden');
-            showToast('Este nome de usuário já está em uso!', false);
-            return;
-          }
+        btn.disabled = false;
+        btnText.textContent = "Continuar";
+        icon.classList.remove('hidden');
+        spinner.classList.add('hidden');
 
-          // Verifica se o e-mail já existe no Firestore
-          const snapshot = await getDocs(usersCollectionRef);
-          let emailExists = false;
-          snapshot.forEach(docSnap => {
-            if (docSnap.data().email.toLowerCase() === email) emailExists = true;
-          });
-
-          if (emailExists) {
-            btn.disabled = false;
-            btnText.textContent = "Continuar";
-            icon.classList.remove('hidden');
-            spinner.classList.add('hidden');
-            showToast('Este e-mail já possui uma conta!', false);
-            return;
-          }
-
-          btnText.textContent = "A criar...";
-          // Gravação bem-sucedida no Firestore
-          await setDoc(userDocRef, {
-            username,
-            email,
-            password,
-            createdAt: new Date().toISOString()
-          });
-
-          setTimeout(() => {
-            btn.disabled = false;
-            btnText.textContent = "Continuar";
-            icon.classList.remove('hidden');
-            spinner.classList.add('hidden');
-
-            openMainApp(username);
-          }, 1000);
-
-        } catch (err) {
-          console.error("Erro ao criar conta:", err);
-          btn.disabled = false;
-          btnText.textContent = "Continuar";
-          icon.classList.remove('hidden');
-          spinner.classList.add('hidden');
-          showToast('Erro ao criar conta online. Tente novamente.', false);
+        if (result.success) {
+          showToast(result.message);
+          currentUserSession = { username, email };
+          openMainApp(username);
+        } else {
+          showToast(result.message, false);
         }
       }
     }
 
-    // Envio do Modal via EmailJS
     window.handleRecovery = async function(event) {
       event.preventDefault();
-
       const emailInput = document.getElementById('recovery-email');
       const btn = document.getElementById('btn-recovery-submit');
       const btnText = document.getElementById('recovery-btn-text');
       const spinner = document.getElementById('recovery-spinner');
-
       const userEmail = emailInput.value.trim();
 
       btn.disabled = true;
       btnText.textContent = "A enviar...";
-      spinner.classList.add('hidden');
+      spinner.classList.remove('hidden');
 
       try {
         if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY !== "YOUR_PUBLIC_KEY") {
@@ -1108,7 +876,6 @@
           await new Promise(resolve => setTimeout(resolve, 800));
           showToast(`Link de recuperação enviado para ${userEmail}!`);
         }
-
         closeModal();
         emailInput.value = '';
       } catch (error) {
@@ -1123,3 +890,4 @@
   </script>
 </body>
 </html>
+
