@@ -189,12 +189,12 @@
         </div>
 
         <form onsubmit="handleAuth(event, 'login')" class="space-y-4">
-          <!-- E-mail ou Nome de usuário -->
+          <!-- E-mail ou Nome de usuário (Identifica minúsculas automaticamente) -->
           <div class="space-y-1.5">
             <label class="text-xs font-semibold text-slate-300">E-mail ou Nome de usuário</label>
             <div class="input-dark rounded-xl flex items-center px-3.5 py-3">
               <i data-lucide="user-check" class="w-5 h-5 text-slate-500 mr-3 shrink-0"></i>
-              <input type="text" id="login-identifier" required placeholder="seu.nick ou voce@exemplo.com" class="bg-transparent border-none outline-none w-full text-sm placeholder-slate-600">
+              <input type="text" id="login-identifier" required placeholder="seu.nick ou voce@exemplo.com" oninput="this.value = this.value.toLowerCase()" class="bg-transparent border-none outline-none w-full text-sm placeholder-slate-600">
             </div>
           </div>
 
@@ -608,7 +608,7 @@
       }
     };
 
-    // Sistema de Manter Conectado (Restaura a sessão se houver utilizador válido)
+    // Sistema de Manter Conectado (Restaura a sessão online se houver utilizador válido)
     window.addEventListener('DOMContentLoaded', async () => {
       await initAuth();
       const savedUser = localStorage.getItem('vaibcod_active_user');
@@ -737,7 +737,7 @@
       checkUsernameAvailability();
     }
 
-    // Verificação de Nome de Utilizador na Nuvem (Firestore) com atraso de 3s
+    // Verificação em tempo real de Nome de Utilizador na Nuvem (com debounce de 3s)
     window.checkUsernameAvailability = function() {
       const input = document.getElementById('register-username');
       const container = document.getElementById('username-container');
@@ -795,7 +795,7 @@
       }, 3000);
     }
 
-    // Verificação de E-mail na Nuvem (Firestore)
+    // Verificação em tempo real de E-mail na Nuvem
     window.checkEmailAvailability = function() {
       const input = document.getElementById('register-email');
       const container = document.getElementById('email-container');
@@ -888,7 +888,7 @@
       }, 3500);
     }
 
-    // Abre a tela principal e guarda a sessão
+    // Abre a tela principal e guarda a sessão online
     window.openMainApp = function(username) {
       if (username) {
         localStorage.setItem('vaibcod_active_user', username);
@@ -947,30 +947,66 @@
       lucide.createIcons();
     }
 
-    // Handlers do Formulário (Criação de conta com verificação rigorosa no Firestore)
+    // Handlers do Formulário (Registo e Login com Validação Completa Online no Firestore)
     window.handleAuth = async function(event, type) {
       event.preventDefault();
 
       if (type === 'login') {
         const identifier = document.getElementById('login-identifier').value.trim().toLowerCase();
+        const password = document.getElementById('login-password').value;
         const btn = document.getElementById('btn-login-submit');
         const btnText = document.getElementById('login-btn-text');
         const icon = document.getElementById('login-btn-icon');
         const spinner = document.getElementById('login-spinner');
+
+        if (!identifier || !password) return;
 
         btn.disabled = true;
         btnText.textContent = "A entrar...";
         icon.classList.add('hidden');
         spinner.classList.remove('hidden');
 
-        setTimeout(() => {
+        try {
+          let foundUser = null;
+          
+          // Verifica se logou diretamente pelo nome de utilizador (document ID)
+          const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', identifier);
+          const docSnap = await getDoc(docRef);
+          
+          if (docSnap.exists() && docSnap.data().password === password) {
+            foundUser = docSnap.data().username;
+          } else {
+            // Se não for por ID direto, busca por e-mail na nuvem
+            const snapshot = await getDocs(usersCollectionRef);
+            snapshot.forEach(docSnap => {
+              const data = docSnap.data();
+              if ((data.email === identifier || data.username === identifier) && data.password === password) {
+                foundUser = data.username;
+              }
+            });
+          }
+
+          if (foundUser) {
+            btn.disabled = false;
+            btnText.textContent = "Continuar";
+            icon.classList.remove('hidden');
+            spinner.classList.add('hidden');
+            openMainApp(foundUser);
+          } else {
+            btn.disabled = false;
+            btnText.textContent = "Continuar";
+            icon.classList.remove('hidden');
+            spinner.classList.add('hidden');
+            showToast('Utilizador ou senha incorretos!', false);
+          }
+        } catch (err) {
+          console.error("Erro no login:", err);
           btn.disabled = false;
           btnText.textContent = "Continuar";
           icon.classList.remove('hidden');
           spinner.classList.add('hidden');
-
-          openMainApp(identifier);
-        }, 1000);
+          showToast('Erro de conexão ao entrar.', false);
+        }
 
       } else {
         const username = document.getElementById('register-username').value.trim().toLowerCase();
@@ -990,7 +1026,7 @@
         spinner.classList.remove('hidden');
 
         try {
-          // Validação bloqueante na nuvem: verifica se já existe o username ou email
+          // Validação bloqueante online: Verifica se o nome de utilizador já existe na nuvem
           const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', username);
           const docSnap = await getDoc(userDocRef);
 
@@ -1003,6 +1039,7 @@
             return;
           }
 
+          // Validação bloqueante online: Verifica se o e-mail já existe na nuvem
           const snapshot = await getDocs(usersCollectionRef);
           let emailExists = false;
           snapshot.forEach(docSnap => {
@@ -1019,7 +1056,7 @@
           }
 
           btnText.textContent = "A criar...";
-          // Gravação permanente na nuvem
+          // Gravação permanente e segura na nuvem (Firestore)
           await setDoc(userDocRef, {
             username,
             email,
@@ -1037,12 +1074,12 @@
           }, 1000);
 
         } catch (err) {
-          console.error("Erro no registo:", err);
+          console.error("Erro ao criar conta:", err);
           btn.disabled = false;
           btnText.textContent = "Continuar";
           icon.classList.remove('hidden');
           spinner.classList.add('hidden');
-          showToast('Erro ao criar conta. Tente novamente.', false);
+          showToast('Erro ao criar conta online. Tente novamente.', false);
         }
       }
     }
@@ -1060,7 +1097,7 @@
 
       btn.disabled = true;
       btnText.textContent = "A enviar...";
-      spinner.classList.add('hidden');
+      spinner.classList.remove('hidden');
 
       try {
         if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY !== "YOUR_PUBLIC_KEY") {
