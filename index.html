@@ -189,7 +189,7 @@
         </div>
 
         <form onsubmit="handleAuth(event, 'login')" class="space-y-4">
-          <!-- E-mail ou Nome de usuário (Identifica minúsculas automaticamente) -->
+          <!-- E-mail ou Nome de usuário (Força minúsculas para match correto) -->
           <div class="space-y-1.5">
             <label class="text-xs font-semibold text-slate-300">E-mail ou Nome de usuário</label>
             <div class="input-dark rounded-xl flex items-center px-3.5 py-3">
@@ -969,7 +969,7 @@
         try {
           let foundUser = null;
           
-          // Verifica se logou diretamente pelo nome de utilizador (document ID)
+          // Verifica se logou diretamente pelo nome de utilizador (document ID em minúsculas)
           const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', identifier);
           const docSnap = await getDoc(docRef);
           
@@ -1026,7 +1026,7 @@
         spinner.classList.remove('hidden');
 
         try {
-          // Validação bloqueante online: Verifica se o nome de utilizador já existe na nuvem
+          // Validação bloqueante online: verifica se já existe o username ou email
           const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', username);
           const docSnap = await getDoc(userDocRef);
 
@@ -1039,7 +1039,6 @@
             return;
           }
 
-          // Validação bloqueante online: Verifica se o e-mail já existe na nuvem
           const snapshot = await getDocs(usersCollectionRef);
           let emailExists = false;
           snapshot.forEach(docSnap => {
@@ -1056,7 +1055,7 @@
           }
 
           btnText.textContent = "A criar...";
-          // Gravação permanente e segura na nuvem (Firestore)
+          // Gravação permanente na nuvem
           await setDoc(userDocRef, {
             username,
             email,
@@ -1074,12 +1073,12 @@
           }, 1000);
 
         } catch (err) {
-          console.error("Erro ao criar conta:", err);
+          console.error("Erro no registo:", err);
           btn.disabled = false;
           btnText.textContent = "Continuar";
           icon.classList.remove('hidden');
           spinner.classList.add('hidden');
-          showToast('Erro ao criar conta online. Tente novamente.', false);
+          showToast('Erro ao criar conta. Tente novamente.', false);
         }
       }
     }
@@ -1097,7 +1096,7 @@
 
       btn.disabled = true;
       btnText.textContent = "A enviar...";
-      spinner.classList.remove('hidden');
+      spinner.classList.add('hidden');
 
       try {
         if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY !== "YOUR_PUBLIC_KEY") {
@@ -1126,4 +1125,4 @@
     }
   </script>
 </body>
-</html>
+  </html>
