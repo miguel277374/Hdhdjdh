@@ -189,7 +189,7 @@
         </div>
 
         <form onsubmit="handleAuth(event, 'login')" class="space-y-4">
-          <!-- E-mail ou Nome de usuário (Força minúsculas para match correto) -->
+          <!-- E-mail ou Nome de usuário -->
           <div class="space-y-1.5">
             <label class="text-xs font-semibold text-slate-300">E-mail ou Nome de usuário</label>
             <div class="input-dark rounded-xl flex items-center px-3.5 py-3">
@@ -608,13 +608,10 @@
       }
     };
 
-    // Sistema de Manter Conectado (Restaura a sessão online se houver utilizador válido)
+    // DOMContentLoaded: Inicia sempre limpo na tela de login (sem auto-login por enquanto)
     window.addEventListener('DOMContentLoaded', async () => {
       await initAuth();
-      const savedUser = localStorage.getItem('vaibcod_active_user');
-      if (savedUser && savedUser.trim() !== '' && savedUser !== 'undefined' && savedUser !== 'null') {
-        openMainApp(savedUser);
-      }
+      localStorage.removeItem('vaibcod_active_user');
     });
 
     // Sistema de Preview de Imagem/GIF ao Criar Servidor
@@ -728,7 +725,7 @@
       lucide.createIcons();
     }
 
-    // Input Apenas Minúsculas
+    // Input Apenas Minúsculas para Username
     window.handleUsernameInput = function(input) {
       const lowerVal = input.value.toLowerCase();
       if (input.value !== lowerVal) {
@@ -737,7 +734,7 @@
       checkUsernameAvailability();
     }
 
-    // Verificação em tempo real de Nome de Utilizador na Nuvem (com debounce de 3s)
+    // Verificação de Nome de Utilizador (Com atraso exato de 1 segundo)
     window.checkUsernameAvailability = function() {
       const input = document.getElementById('register-username');
       const container = document.getElementById('username-container');
@@ -770,6 +767,7 @@
       feedback.className = "text-[11px] text-blue-400 font-medium transition-all";
       iconContainer.innerHTML = `<div class="w-3.5 h-3.5 border-2 border-blue-400/30 border-t-blue-400 rounded-full animate-spin"></div>`;
 
+      // Debounce de 1 segundo (1000ms)
       checkUserTimeout = setTimeout(async () => {
         let isTaken = false;
         try {
@@ -792,10 +790,10 @@
           iconContainer.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>`;
         }
         lucide.createIcons();
-      }, 3000);
+      }, 1000);
     }
 
-    // Verificação em tempo real de E-mail na Nuvem
+    // Verificação de E-mail (Com atraso exato de 1 segundo)
     window.checkEmailAvailability = function() {
       const input = document.getElementById('register-email');
       const container = document.getElementById('email-container');
@@ -828,12 +826,13 @@
       feedback.className = "text-[11px] text-blue-400 font-medium transition-all";
       iconContainer.innerHTML = `<div class="w-3.5 h-3.5 border-2 border-blue-400/30 border-t-blue-400 rounded-full animate-spin"></div>`;
 
+      // Debounce de 1 segundo (1000ms)
       checkEmailTimeout = setTimeout(async () => {
         let isTaken = false;
         try {
           const snapshot = await getDocs(usersCollectionRef);
           snapshot.forEach(docSnap => {
-            if (docSnap.data().email === val) isTaken = true;
+            if (docSnap.data().email.toLowerCase() === val) isTaken = true;
           });
         } catch (e) {
           console.warn("Erro ao verificar email:", e);
@@ -851,7 +850,7 @@
           iconContainer.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>`;
         }
         lucide.createIcons();
-      }, 500);
+      }, 1000);
     }
 
     // Modal de Recuperação
@@ -888,11 +887,8 @@
       }, 3500);
     }
 
-    // Abre a tela principal e guarda a sessão online
+    // Abre a tela principal
     window.openMainApp = function(username) {
-      if (username) {
-        localStorage.setItem('vaibcod_active_user', username);
-      }
       document.getElementById('auth-screen').classList.add('hidden');
       document.getElementById('main-app-screen').classList.remove('hidden');
 
@@ -947,7 +943,7 @@
       lucide.createIcons();
     }
 
-    // Handlers do Formulário (Registo e Login com Validação Completa Online no Firestore)
+    // Handlers do Formulário (Login e Registo com Gravação Blindada no Firestore)
     window.handleAuth = async function(event, type) {
       event.preventDefault();
 
@@ -969,18 +965,18 @@
         try {
           let foundUser = null;
           
-          // Verifica se logou diretamente pelo nome de utilizador (document ID em minúsculas)
+          // Tenta buscar diretamente pelo ID do documento (username)
           const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', identifier);
           const docSnap = await getDoc(docRef);
           
           if (docSnap.exists() && docSnap.data().password === password) {
             foundUser = docSnap.data().username;
           } else {
-            // Se não for por ID direto, busca por e-mail na nuvem
+            // Se não achar por ID, varre a coleção procurando por e-mail ou username
             const snapshot = await getDocs(usersCollectionRef);
             snapshot.forEach(docSnap => {
               const data = docSnap.data();
-              if ((data.email === identifier || data.username === identifier) && data.password === password) {
+              if ((data.email.toLowerCase() === identifier || data.username.toLowerCase() === identifier) && data.password === password) {
                 foundUser = data.username;
               }
             });
@@ -1026,7 +1022,7 @@
         spinner.classList.remove('hidden');
 
         try {
-          // Validação bloqueante online: verifica se já existe o username ou email
+          // Verifica se o username já existe no Firestore
           const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', username);
           const docSnap = await getDoc(userDocRef);
 
@@ -1039,10 +1035,11 @@
             return;
           }
 
+          // Verifica se o e-mail já existe no Firestore
           const snapshot = await getDocs(usersCollectionRef);
           let emailExists = false;
           snapshot.forEach(docSnap => {
-            if (docSnap.data().email === email) emailExists = true;
+            if (docSnap.data().email.toLowerCase() === email) emailExists = true;
           });
 
           if (emailExists) {
@@ -1055,7 +1052,7 @@
           }
 
           btnText.textContent = "A criar...";
-          // Gravação permanente na nuvem
+          // Gravação bem-sucedida no Firestore
           await setDoc(userDocRef, {
             username,
             email,
@@ -1073,12 +1070,12 @@
           }, 1000);
 
         } catch (err) {
-          console.error("Erro no registo:", err);
+          console.error("Erro ao criar conta:", err);
           btn.disabled = false;
           btnText.textContent = "Continuar";
           icon.classList.remove('hidden');
           spinner.classList.add('hidden');
-          showToast('Erro ao criar conta. Tente novamente.', false);
+          showToast('Erro ao criar conta online. Tente novamente.', false);
         }
       }
     }
@@ -1125,4 +1122,4 @@
     }
   </script>
 </body>
-  </html>
+</html>
