@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VaibCod</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -16,13 +16,12 @@
       font-family: 'Inter', sans-serif;
       background-color: #060911;
       color: #f8fafc;
-      height: 100vh;
-      height: 100dvh;
-      overflow: hidden;
+      min-height: 100vh;
+      margin: 0;
       user-select: none;
     }
 
-    /* Padrão de grelha sutil de fundo para login */
+    /* Padrão de grelha subtil de fundo para login */
     .bg-grid-pattern {
       background-size: 40px 40px;
       background-image: 
@@ -151,12 +150,12 @@
     }
   </style>
 </head>
-<body class="bg-[#060911] h-screen h-[100dvh] flex flex-col justify-between relative overflow-hidden">
+<body class="bg-[#060911] min-h-screen flex flex-col justify-between relative">
 
   <!-- ==========================================
        TELA 1: LOGIN / CADASTRO
        ========================================== -->
-  <div id="auth-screen" class="bg-grid-pattern absolute inset-0 flex items-center justify-center p-4 text-slate-100 z-30 overflow-y-auto">
+  <div id="auth-screen" class="bg-grid-pattern fixed inset-0 flex items-center justify-center p-4 text-slate-100 z-30 overflow-y-auto">
     
     <div class="glow-top-left"></div>
     <div class="glow-bottom-right"></div>
@@ -284,10 +283,10 @@
   <!-- ==========================================
        TELA 2: TELA PRINCIPAL (IMAGEM 7826.JPG)
        ========================================== -->
-  <div id="main-app-screen" class="hidden absolute inset-0 z-40 bg-[#060911] flex flex-col h-screen h-[100dvh] overflow-hidden">
+  <div id="main-app-screen" class="hidden fixed inset-0 z-40 bg-[#060911] flex flex-col h-full w-full overflow-hidden">
     
-    <!-- ÁREA CENTRAL DE CONTEÚDO (FLEX CONTAINER COM SCROLL INTERNO) -->
-    <div class="flex-1 flex overflow-hidden relative">
+    <!-- ÁREA CENTRAL DE CONTEÚDO -->
+    <div class="flex-1 flex overflow-hidden">
       
       <!-- BARRA LATERAL ESQUERDA (SIDEBAR) -->
       <aside class="w-[72px] app-sidebar flex flex-col items-center py-4 gap-3 shrink-0 z-10">
@@ -317,8 +316,8 @@
 
       </aside>
 
-      <!-- PAINEL DE MENSAGENS (SCROLL INTERNO) -->
-      <main class="flex-1 app-main-menu flex flex-col p-4 sm:p-6 overflow-y-auto custom-scrollbar pb-24">
+      <!-- PAINEL DE MENSAGENS (SCROLL INTERNO COM ESPAÇO PARA O RODAPÉ FIXO) -->
+      <main class="flex-1 app-main-menu flex flex-col p-4 sm:p-6 overflow-y-auto custom-scrollbar pb-28">
         
         <div class="flex items-center justify-between mb-5">
           <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white">Mensagens</h1>
@@ -380,8 +379,8 @@
       </main>
     </div>
 
-    <!-- RODAPÉ FIXO ABSOLUTO NO FUNDO (NÃO SOME AO ROLAR) -->
-    <footer class="absolute bottom-0 left-0 right-0 h-16 bottom-bar px-3 sm:px-4 flex items-center justify-between shrink-0 z-30 shadow-2xl border-t border-slate-800/90">
+    <!-- RODAPÉ FIXO NA BASE (NÃO SOME NUNCA) -->
+    <footer class="absolute bottom-0 left-0 right-0 h-16 bottom-bar px-3 sm:px-4 flex items-center justify-between shrink-0 z-30 shadow-2xl">
       
       <!-- PERFIL DO USUÁRIO -->
       <div class="flex items-center gap-2.5">
@@ -948,7 +947,7 @@
           showToast(`Link de recuperação enviado para ${userEmail}!`);
         }
 
-    closeModal();
+        closeModal();
         emailInput.value = '';
       } catch (error) {
         console.error("Erro ao enviar e-mail:", error);
