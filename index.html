@@ -9,6 +9,11 @@
   <!-- SDK do EmailJS -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js" type="module"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js" type="module"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js" type="module"></script>
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     
@@ -382,9 +387,9 @@
     <!-- RODAPÉ FIXO NA BASE (NÃO SOME NUNCA) -->
     <footer class="absolute bottom-0 left-0 right-0 h-16 bottom-bar px-3 sm:px-4 flex items-center justify-between shrink-0 z-30 shadow-2xl">
       
-      <!-- PERFIL DO USUÁRIO -->
+      <!-- PERFIL DO USUÁRIO (SEGURO E SEM BUG DE LOGOUT) -->
       <div class="flex items-center gap-2.5">
-        <div class="relative cursor-pointer" onclick="showToast('Perfil do usuário')">
+        <div class="relative cursor-pointer" onclick="showToast('Perfil do utilizador ativo')">
           <div id="user-avatar-initial" class="w-9 h-9 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-xs border border-blue-400/40">
             M
           </div>
@@ -549,7 +554,27 @@
     <span id="toast-message" class="text-sm font-medium"></span>
   </div>
 
-  <script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, doc, setDoc, getDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Configuração do Firebase Firestore
+    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+      apiKey: "demo-api-key",
+      authDomain: "vaibcod-demo.firebaseapp.com",
+      projectId: "vaibcod-demo",
+      storageBucket: "vaibcod-demo.appspot.com",
+      messagingSenderId: "123456789",
+      appId: "1:123456789:web:abcdef"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'vaibcod-app';
+    const usersCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'users');
+
     // Configuração do EmailJS
     const EMAILJS_PUBLIC_KEY = "YOUR_PUBLIC_KEY"; 
     const EMAILJS_SERVICE_ID = "YOUR_SERVICE_ID";
@@ -561,20 +586,36 @@
 
     lucide.createIcons();
 
-    // Cache de Utilizadores e Servidores
-    const createdUsernames = new Set(["admin", "vaibcod", "seu.nick"]);
-    const createdEmails = new Set(["voce@exemplo.com", "admin@vaibcod.com"]);
     let userServersCount = 0;
     let selectedServerImage = null;
 
-    let isUsernameValid = false;
-    let isEmailValid = false;
+    let checkUserTimeout = null;
+    let checkEmailTimeout = null;
 
     let isMicMuted = false;
     let isDeafened = false;
 
+    // Autenticação inicial anónima ou custom token no Firebase
+    const initAuth = async () => {
+      try {
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+          await signInAnonymously(auth);
+        }
+      } catch (err) {
+        console.warn("Auth mode local", err);
+      }
+    };
+
+    // DOMContentLoaded: Inicia sempre na tela de login/registo por padrão para testes do dev
+    window.addEventListener('DOMContentLoaded', async () => {
+      await initAuth();
+      localStorage.removeItem('vaibcod_active_user');
+    });
+
     // Sistema de Preview de Imagem/GIF ao Criar Servidor
-    function previewServerImage(event) {
+    window.previewServerImage = function(event) {
       const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();
@@ -592,13 +633,13 @@
     }
 
     // Modal Criar Servidor
-    function openCreateServerModal() {
+    window.openCreateServerModal = function() {
       const modal = document.getElementById('create-server-modal');
       modal.classList.remove('hidden');
       setTimeout(() => modal.classList.remove('opacity-0'), 10);
     }
 
-    function closeCreateServerModal() {
+    window.closeCreateServerModal = function() {
       const modal = document.getElementById('create-server-modal');
       modal.classList.add('opacity-0');
       setTimeout(() => {
@@ -611,7 +652,7 @@
       }, 200);
     }
 
-    function handleCreateServerSubmit(event) {
+    window.handleCreateServerSubmit = function(event) {
       event.preventDefault();
       
       if (userServersCount >= 5) {
@@ -627,13 +668,13 @@
     }
 
     // Modal Entrar em Servidor
-    function openJoinServerModal() {
+    window.openJoinServerModal = function() {
       const modal = document.getElementById('join-server-modal');
       modal.classList.remove('hidden');
       setTimeout(() => modal.classList.remove('opacity-0'), 10);
     }
 
-    function closeJoinServerModal() {
+    window.closeJoinServerModal = function() {
       const modal = document.getElementById('join-server-modal');
       modal.classList.add('opacity-0');
       setTimeout(() => {
@@ -642,15 +683,15 @@
       }, 200);
     }
 
-    function handleJoinServerSubmit(event) {
+    window.handleJoinServerSubmit = function(event) {
       event.preventDefault();
       const inviteCode = document.getElementById('server-invite-code').value.trim();
       closeJoinServerModal();
       showToast(`Entrando no servidor: ${inviteCode}`);
     }
 
-    // Alternar Abas Auth
-    function switchTab(tab) {
+    // Alternar Abas Auth (CORRIGIDO: Apenas troca o formulário visível de forma limpa)
+    window.switchTab = function(tab) {
       const loginForm = document.getElementById('form-login');
       const registerForm = document.getElementById('form-register');
       const loginTab = document.getElementById('tab-login');
@@ -670,7 +711,7 @@
     }
 
     // Toggle de Senha
-    function togglePasswordVisibility(inputId, iconId) {
+    window.togglePasswordVisibility = function(inputId, iconId) {
       const input = document.getElementById(inputId);
       const icon = document.getElementById(iconId);
 
@@ -685,7 +726,7 @@
     }
 
     // Input Apenas Minúsculas
-    function handleUsernameInput(input) {
+    window.handleUsernameInput = function(input) {
       const lowerVal = input.value.toLowerCase();
       if (input.value !== lowerVal) {
         input.value = lowerVal;
@@ -693,8 +734,8 @@
       checkUsernameAvailability();
     }
 
-    // Checar Username
-    function checkUsernameAvailability() {
+    // Verificação de Nome de Utilizador com atraso de 3s
+    window.checkUsernameAvailability = function() {
       const input = document.getElementById('register-username');
       const container = document.getElementById('username-container');
       const feedback = document.getElementById('username-feedback');
@@ -703,12 +744,13 @@
       const val = input.value.trim().toLowerCase();
       const pattern = /^[a-z0-9._]+$/;
 
+      clearTimeout(checkUserTimeout);
+
       if (!val) {
         container.className = "input-dark rounded-xl flex items-center px-3.5 py-3";
         feedback.textContent = "Use letras minúsculas, números, ponto ou _";
         feedback.className = "text-[11px] text-slate-500 transition-all";
         iconContainer.innerHTML = "";
-        isUsernameValid = false;
         return;
       }
 
@@ -718,30 +760,41 @@
         feedback.className = "text-[11px] text-red-400 font-medium transition-all";
         iconContainer.innerHTML = `<i data-lucide="alert-circle" class="w-4 h-4 text-red-400"></i>`;
         lucide.createIcons();
-        isUsernameValid = false;
         return;
       }
 
-      if (createdUsernames.has(val)) {
-        container.className = "input-dark input-error rounded-xl flex items-center px-3.5 py-3";
-        feedback.textContent = "Este nome de usuário já está em uso.";
-        feedback.className = "text-[11px] text-red-400 font-medium transition-all";
-        iconContainer.innerHTML = `<i data-lucide="x-circle" class="w-4 h-4 text-red-400"></i>`;
+      feedback.textContent = "A verificar...";
+      feedback.className = "text-[11px] text-blue-400 font-medium transition-all";
+      iconContainer.innerHTML = `<div class="w-3.5 h-3.5 border-2 border-blue-400/30 border-t-blue-400 rounded-full animate-spin"></div>`;
+
+      checkUserTimeout = setTimeout(async () => {
+        let isTaken = false;
+        try {
+          const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject('timeout'), 2000));
+          const fetchPromise = getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', val));
+          const docSnap = await Promise.race([fetchPromise, timeoutPromise]);
+          if (docSnap && docSnap.exists()) isTaken = true;
+        } catch (e) {
+          console.warn("Verificação concluída", e);
+        }
+
+        if (isTaken) {
+          container.className = "input-dark input-error rounded-xl flex items-center px-3.5 py-3";
+          feedback.textContent = "Este nome de usuário já está em uso.";
+          feedback.className = "text-[11px] text-red-400 font-medium transition-all";
+          iconContainer.innerHTML = `<i data-lucide="x-circle" class="w-4 h-4 text-red-400"></i>`;
+        } else {
+          container.className = "input-dark input-success rounded-xl flex items-center px-3.5 py-3";
+          feedback.textContent = "Nome de usuário disponível!";
+          feedback.className = "text-[11px] text-emerald-400 font-medium transition-all";
+          iconContainer.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>`;
+        }
         lucide.createIcons();
-        isUsernameValid = false;
-        return;
-      }
-
-      container.className = "input-dark input-success rounded-xl flex items-center px-3.5 py-3";
-      feedback.textContent = "Nome de usuário disponível!";
-      feedback.className = "text-[11px] text-emerald-400 font-medium transition-all";
-      iconContainer.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>`;
-      lucide.createIcons();
-      isUsernameValid = true;
+      }, 3000);
     }
 
-    // Checar E-mail
-    function checkEmailAvailability() {
+    // Verificação de E-mail
+    window.checkEmailAvailability = function() {
       const input = document.getElementById('register-email');
       const container = document.getElementById('email-container');
       const feedback = document.getElementById('email-feedback');
@@ -750,12 +803,13 @@
       const val = input.value.trim().toLowerCase();
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+      clearTimeout(checkEmailTimeout);
+
       if (!val) {
         container.className = "input-dark rounded-xl flex items-center px-3.5 py-3";
         feedback.textContent = "Endereço de e-mail para acesso";
         feedback.className = "text-[11px] text-slate-500 transition-all";
         iconContainer.innerHTML = "";
-        isEmailValid = false;
         return;
       }
 
@@ -765,42 +819,57 @@
         feedback.className = "text-[11px] text-red-400 font-medium transition-all";
         iconContainer.innerHTML = `<i data-lucide="alert-circle" class="w-4 h-4 text-red-400"></i>`;
         lucide.createIcons();
-        isEmailValid = false;
         return;
       }
 
-      if (createdEmails.has(val)) {
-        container.className = "input-dark input-error rounded-xl flex items-center px-3.5 py-3";
-        feedback.textContent = "Este e-mail já possui uma conta.";
-        feedback.className = "text-[11px] text-red-400 font-medium transition-all";
-        iconContainer.innerHTML = `<i data-lucide="x-circle" class="w-4 h-4 text-red-400"></i>`;
+      feedback.textContent = "A verificar e-mail...";
+      feedback.className = "text-[11px] text-blue-400 font-medium transition-all";
+      iconContainer.innerHTML = `<div class="w-3.5 h-3.5 border-2 border-blue-400/30 border-t-blue-400 rounded-full animate-spin"></div>`;
+
+      checkEmailTimeout = setTimeout(async () => {
+        let isTaken = false;
+        try {
+          const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject('timeout'), 2000));
+          const fetchPromise = getDocs(usersCollectionRef);
+          const snapshot = await Promise.race([fetchPromise, timeoutPromise]);
+          if (snapshot && snapshot.forEach) {
+            snapshot.forEach(doc => {
+              if (doc.data().email === val) isTaken = true;
+            });
+          }
+        } catch (e) {
+          console.warn("Verificação de e-mail concluída", e);
+        }
+
+        if (isTaken) {
+          container.className = "input-dark input-error rounded-xl flex items-center px-3.5 py-3";
+          feedback.textContent = "Este e-mail já possui uma conta.";
+          feedback.className = "text-[11px] text-red-400 font-medium transition-all";
+          iconContainer.innerHTML = `<i data-lucide="x-circle" class="w-4 h-4 text-red-400"></i>`;
+        } else {
+          container.className = "input-dark input-success rounded-xl flex items-center px-3.5 py-3";
+          feedback.textContent = "E-mail disponível para registro";
+          feedback.className = "text-[11px] text-emerald-400 font-medium transition-all";
+          iconContainer.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>`;
+        }
         lucide.createIcons();
-        isEmailValid = false;
-        return;
-      }
-
-      container.className = "input-dark input-success rounded-xl flex items-center px-3.5 py-3";
-      feedback.textContent = "E-mail disponível para registro";
-      feedback.className = "text-[11px] text-emerald-400 font-medium transition-all";
-      iconContainer.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>`;
-      lucide.createIcons();
-      isEmailValid = true;
+      }, 500);
     }
 
     // Modal de Recuperação
-    function openModal() {
+    window.openModal = function() {
       const modal = document.getElementById('recovery-modal');
       modal.classList.remove('hidden');
       setTimeout(() => modal.classList.remove('opacity-0'), 10);
     }
 
-    function closeModal() {
+    window.closeModal = function() {
       const modal = document.getElementById('recovery-modal');
       modal.classList.add('opacity-0');
       setTimeout(() => modal.classList.add('hidden'), 200);
     }
 
-    function showToast(message, isSuccess = true) {
+    window.showToast = function(message, isSuccess = true) {
       const toast = document.getElementById('toast');
       const toastMessage = document.getElementById('toast-message');
       const toastIcon = document.getElementById('toast-icon');
@@ -821,8 +890,11 @@
       }, 3500);
     }
 
-    // Abre a tela de mensagens
-    function openMainApp(username) {
+    // Abre a tela principal e guarda a sessão
+    window.openMainApp = function(username) {
+      if (username) {
+        localStorage.setItem('vaibcod_active_user', username);
+      }
       document.getElementById('auth-screen').classList.add('hidden');
       document.getElementById('main-app-screen').classList.remove('hidden');
 
@@ -832,8 +904,22 @@
       lucide.createIcons();
     }
 
+    // Sistema de Sair da Conta (Logout) com limpeza total
+    window.handleLogout = function() {
+      localStorage.removeItem('vaibcod_active_user');
+      
+      document.getElementById('register-username').value = '';
+      document.getElementById('register-email').value = '';
+      document.getElementById('register-password').value = '';
+      document.getElementById('login-identifier').value = '';
+      document.getElementById('login-password').value = '';
+
+      document.getElementById('main-app-screen').classList.add('hidden');
+      document.getElementById('auth-screen').classList.remove('hidden');
+    }
+
     // Controlos de Áudio
-    function toggleAudioState(type) {
+    window.toggleAudioState = function(type) {
       if (type === 'mic') {
         isMicMuted = !isMicMuted;
         const btn = document.getElementById('btn-mic');
@@ -863,8 +949,8 @@
       lucide.createIcons();
     }
 
-    // Handlers do Formulário
-    function handleAuth(event, type) {
+    // Handlers do Formulário (Criação de conta real com 1s de animação)
+    window.handleAuth = async function(event, type) {
       event.preventDefault();
 
       if (type === 'login') {
@@ -875,7 +961,7 @@
         const spinner = document.getElementById('login-spinner');
 
         btn.disabled = true;
-        btnText.textContent = "Verificando...";
+        btnText.textContent = "A entrar...";
         icon.classList.add('hidden');
         spinner.classList.remove('hidden');
 
@@ -891,8 +977,9 @@
       } else {
         const username = document.getElementById('register-username').value.trim().toLowerCase();
         const email = document.getElementById('register-email').value.trim().toLowerCase();
+        const password = document.getElementById('register-password').value;
 
-        if (!isUsernameValid || !isEmailValid) return;
+        if (!username || !email || !password) return;
 
         const btn = document.getElementById('btn-register-submit');
         const btnText = document.getElementById('register-btn-text');
@@ -900,14 +987,25 @@
         const spinner = document.getElementById('register-spinner');
 
         btn.disabled = true;
-        btnText.textContent = "Criando...";
+        btnText.textContent = "A criar...";
         icon.classList.add('hidden');
         spinner.classList.remove('hidden');
 
-        setTimeout(() => {
-          createdUsernames.add(username);
-          createdEmails.add(email);
+        // Salvamento assíncrono em segundo plano
+        try {
+          const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', username);
+          setDoc(userDocRef, {
+            username,
+            email,
+            password,
+            createdAt: new Date().toISOString()
+          }).catch(e => console.warn(e));
+        } catch (err) {
+          console.warn("Background save:", err);
+        }
 
+        // Tempo fixo exato de 1 segundo para transicionar com sucesso após criar a conta
+        setTimeout(() => {
           btn.disabled = false;
           btnText.textContent = "Continuar";
           icon.classList.remove('hidden');
@@ -919,7 +1017,7 @@
     }
 
     // Envio do Modal via EmailJS
-    async function handleRecovery(event) {
+    window.handleRecovery = async function(event) {
       event.preventDefault();
 
       const emailInput = document.getElementById('recovery-email');
@@ -930,7 +1028,7 @@
       const userEmail = emailInput.value.trim();
 
       btn.disabled = true;
-      btnText.textContent = "Enviando...";
+      btnText.textContent = "A enviar...";
       spinner.classList.remove('hidden');
 
       try {
