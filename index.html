@@ -387,9 +387,9 @@
     <!-- RODAPÉ FIXO NA BASE (NÃO SOME NUNCA) -->
     <footer class="absolute bottom-0 left-0 right-0 h-16 bottom-bar px-3 sm:px-4 flex items-center justify-between shrink-0 z-30 shadow-2xl">
       
-      <!-- PERFIL DO USUÁRIO (SEGURO E SEM BUG DE LOGOUT) -->
+      <!-- PERFIL DO USUÁRIO (CLIQUE PARA SAIR / LOGOUT) -->
       <div class="flex items-center gap-2.5">
-        <div class="relative cursor-pointer" onclick="showToast('Perfil do utilizador ativo')">
+        <div class="relative cursor-pointer" onclick="handleLogout()" title="Clique para sair da conta">
           <div id="user-avatar-initial" class="w-9 h-9 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-xs border border-blue-400/40">
             M
           </div>
@@ -608,10 +608,13 @@
       }
     };
 
-    // DOMContentLoaded: Inicia sempre na tela de login/registo por padrão para testes do dev
+    // Sistema de Manter Conectado (Restaura a sessão se houver utilizador válido)
     window.addEventListener('DOMContentLoaded', async () => {
       await initAuth();
-      localStorage.removeItem('vaibcod_active_user');
+      const savedUser = localStorage.getItem('vaibcod_active_user');
+      if (savedUser && savedUser.trim() !== '' && savedUser !== 'undefined' && savedUser !== 'null') {
+        openMainApp(savedUser);
+      }
     });
 
     // Sistema de Preview de Imagem/GIF ao Criar Servidor
@@ -690,7 +693,7 @@
       showToast(`Entrando no servidor: ${inviteCode}`);
     }
 
-    // Alternar Abas Auth (CORRIGIDO: Apenas troca o formulário visível de forma limpa)
+    // Alternar Abas Auth
     window.switchTab = function(tab) {
       const loginForm = document.getElementById('form-login');
       const registerForm = document.getElementById('form-register');
@@ -734,7 +737,7 @@
       checkUsernameAvailability();
     }
 
-    // Verificação de Nome de Utilizador com atraso de 3s
+    // Verificação de Nome de Utilizador na Nuvem (Firestore) com atraso de 3s
     window.checkUsernameAvailability = function() {
       const input = document.getElementById('register-username');
       const container = document.getElementById('username-container');
@@ -770,12 +773,11 @@
       checkUserTimeout = setTimeout(async () => {
         let isTaken = false;
         try {
-          const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject('timeout'), 2000));
-          const fetchPromise = getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', val));
-          const docSnap = await Promise.race([fetchPromise, timeoutPromise]);
-          if (docSnap && docSnap.exists()) isTaken = true;
+          const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', val);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) isTaken = true;
         } catch (e) {
-          console.warn("Verificação concluída", e);
+          console.warn("Erro ao verificar username:", e);
         }
 
         if (isTaken) {
@@ -793,7 +795,7 @@
       }, 3000);
     }
 
-    // Verificação de E-mail
+    // Verificação de E-mail na Nuvem (Firestore)
     window.checkEmailAvailability = function() {
       const input = document.getElementById('register-email');
       const container = document.getElementById('email-container');
@@ -829,16 +831,12 @@
       checkEmailTimeout = setTimeout(async () => {
         let isTaken = false;
         try {
-          const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject('timeout'), 2000));
-          const fetchPromise = getDocs(usersCollectionRef);
-          const snapshot = await Promise.race([fetchPromise, timeoutPromise]);
-          if (snapshot && snapshot.forEach) {
-            snapshot.forEach(doc => {
-              if (doc.data().email === val) isTaken = true;
-            });
-          }
+          const snapshot = await getDocs(usersCollectionRef);
+          snapshot.forEach(docSnap => {
+            if (docSnap.data().email === val) isTaken = true;
+          });
         } catch (e) {
-          console.warn("Verificação de e-mail concluída", e);
+          console.warn("Erro ao verificar email:", e);
         }
 
         if (isTaken) {
@@ -904,7 +902,7 @@
       lucide.createIcons();
     }
 
-    // Sistema de Sair da Conta (Logout) com limpeza total
+    // Sistema de Sair da Conta (Logout)
     window.handleLogout = function() {
       localStorage.removeItem('vaibcod_active_user');
       
@@ -949,7 +947,7 @@
       lucide.createIcons();
     }
 
-    // Handlers do Formulário (Criação de conta real com 1s de animação)
+    // Handlers do Formulário (Criação de conta com verificação rigorosa no Firestore)
     window.handleAuth = async function(event, type) {
       event.preventDefault();
 
@@ -987,32 +985,65 @@
         const spinner = document.getElementById('register-spinner');
 
         btn.disabled = true;
-        btnText.textContent = "A criar...";
+        btnText.textContent = "A verificar...";
         icon.classList.add('hidden');
         spinner.classList.remove('hidden');
 
-        // Salvamento assíncrono em segundo plano
         try {
+          // Validação bloqueante na nuvem: verifica se já existe o username ou email
           const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', username);
-          setDoc(userDocRef, {
+          const docSnap = await getDoc(userDocRef);
+
+          if (docSnap.exists()) {
+            btn.disabled = false;
+            btnText.textContent = "Continuar";
+            icon.classList.remove('hidden');
+            spinner.classList.add('hidden');
+            showToast('Este nome de usuário já está em uso!', false);
+            return;
+          }
+
+          const snapshot = await getDocs(usersCollectionRef);
+          let emailExists = false;
+          snapshot.forEach(docSnap => {
+            if (docSnap.data().email === email) emailExists = true;
+          });
+
+          if (emailExists) {
+            btn.disabled = false;
+            btnText.textContent = "Continuar";
+            icon.classList.remove('hidden');
+            spinner.classList.add('hidden');
+            showToast('Este e-mail já possui uma conta!', false);
+            return;
+          }
+
+          btnText.textContent = "A criar...";
+          // Gravação permanente na nuvem
+          await setDoc(userDocRef, {
             username,
             email,
             password,
             createdAt: new Date().toISOString()
-          }).catch(e => console.warn(e));
-        } catch (err) {
-          console.warn("Background save:", err);
-        }
+          });
 
-        // Tempo fixo exato de 1 segundo para transicionar com sucesso após criar a conta
-        setTimeout(() => {
+          setTimeout(() => {
+            btn.disabled = false;
+            btnText.textContent = "Continuar";
+            icon.classList.remove('hidden');
+            spinner.classList.add('hidden');
+
+            openMainApp(username);
+          }, 1000);
+
+        } catch (err) {
+          console.error("Erro no registo:", err);
           btn.disabled = false;
           btnText.textContent = "Continuar";
           icon.classList.remove('hidden');
           spinner.classList.add('hidden');
-
-          openMainApp(username);
-        }, 1000);
+          showToast('Erro ao criar conta. Tente novamente.', false);
+        }
       }
     }
 
@@ -1029,7 +1060,7 @@
 
       btn.disabled = true;
       btnText.textContent = "A enviar...";
-      spinner.classList.remove('hidden');
+      spinner.classList.add('hidden');
 
       try {
         if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY !== "YOUR_PUBLIC_KEY") {
