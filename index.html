@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>VaibCod</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -16,8 +16,9 @@
       font-family: 'Inter', sans-serif;
       background-color: #060911;
       color: #f8fafc;
-      min-height: 100vh;
-      overflow-x: hidden;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
       user-select: none;
     }
 
@@ -138,8 +139,6 @@
     .bottom-bar {
       background-color: #070a12;
       border-top: 1px solid rgba(255, 255, 255, 0.05);
-      /* Margem inferior elevada para evitar sobreposição em navegadores mobile */
-      margin-bottom: env(safe-area-inset-bottom, 12px);
     }
 
     .custom-scrollbar::-webkit-scrollbar {
@@ -152,12 +151,12 @@
     }
   </style>
 </head>
-<body class="bg-[#060911] min-h-screen flex flex-col justify-between relative overflow-hidden">
+<body class="bg-[#060911] h-screen h-[100dvh] flex flex-col justify-between relative overflow-hidden">
 
   <!-- ==========================================
        TELA 1: LOGIN / CADASTRO
        ========================================== -->
-  <div id="auth-screen" class="bg-grid-pattern relative flex items-center justify-center p-4 text-slate-100 min-h-screen w-full z-30">
+  <div id="auth-screen" class="bg-grid-pattern absolute inset-0 flex items-center justify-center p-4 text-slate-100 z-30 overflow-y-auto">
     
     <div class="glow-top-left"></div>
     <div class="glow-bottom-right"></div>
@@ -285,10 +284,10 @@
   <!-- ==========================================
        TELA 2: TELA PRINCIPAL (IMAGEM 7826.JPG)
        ========================================== -->
-  <div id="main-app-screen" class="hidden fixed inset-0 z-40 bg-[#060911] flex flex-col h-screen w-screen overflow-hidden">
+  <div id="main-app-screen" class="hidden absolute inset-0 z-40 bg-[#060911] flex flex-col h-screen h-[100dvh] overflow-hidden">
     
-    <!-- ÁREA CENTRAL DE CONTEÚDO -->
-    <div class="flex-1 flex overflow-hidden">
+    <!-- ÁREA CENTRAL DE CONTEÚDO (FLEX CONTAINER COM SCROLL INTERNO) -->
+    <div class="flex-1 flex overflow-hidden relative">
       
       <!-- BARRA LATERAL ESQUERDA (SIDEBAR) -->
       <aside class="w-[72px] app-sidebar flex flex-col items-center py-4 gap-3 shrink-0 z-10">
@@ -318,8 +317,8 @@
 
       </aside>
 
-      <!-- PAINEL DE MENSAGENS (EMBEDS COMPACTOS) -->
-      <main class="flex-1 app-main-menu flex flex-col p-4 sm:p-6 overflow-y-auto custom-scrollbar">
+      <!-- PAINEL DE MENSAGENS (SCROLL INTERNO) -->
+      <main class="flex-1 app-main-menu flex flex-col p-4 sm:p-6 overflow-y-auto custom-scrollbar pb-24">
         
         <div class="flex items-center justify-between mb-5">
           <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white">Mensagens</h1>
@@ -364,7 +363,7 @@
         </div>
 
         <!-- MENSAGENS DIRETAS -->
-        <div class="mt-6 max-w-xl pb-16">
+        <div class="mt-6 max-w-xl">
           <div class="flex items-center justify-between mb-2.5 px-1">
             <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Mensagens Diretas</span>
             <button onclick="showToast('Inicie uma conversa privada!')" class="text-slate-500 hover:text-slate-200 transition-colors">
@@ -381,8 +380,8 @@
       </main>
     </div>
 
-    <!-- RODAPÉ UNIFICADO ELEVADO: PERFIL + ÁUDIO + CONFIG -->
-    <footer class="bottom-bar mx-3 mb-3 sm:mx-4 sm:mb-4 rounded-2xl h-16 px-3 sm:px-4 flex items-center justify-between shrink-0 z-20 shadow-lg border border-slate-800/80">
+    <!-- RODAPÉ FIXO ABSOLUTO NO FUNDO (NÃO SOME AO ROLAR) -->
+    <footer class="absolute bottom-0 left-0 right-0 h-16 bottom-bar px-3 sm:px-4 flex items-center justify-between shrink-0 z-30 shadow-2xl border-t border-slate-800/90">
       
       <!-- PERFIL DO USUÁRIO -->
       <div class="flex items-center gap-2.5">
@@ -426,23 +425,20 @@
 
 
   <!-- ==========================================
-       MODAL: CRIAR SERVIDOR (COM UPLOAD DE FOTO/GIF)
+       MODAL: CRIAR SERVIDOR
        ========================================== -->
   <div id="create-server-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-start sm:items-center justify-center p-4 pt-16 sm:pt-4 z-50 hidden opacity-0 transition-opacity duration-200">
     <div class="w-full max-w-[420px] bg-[#0c1220] border border-slate-800/90 rounded-2xl p-6 shadow-2xl relative text-slate-100">
       
-      <!-- Botão Fechar (x) -->
       <button onclick="closeCreateServerModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white transition-colors">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
 
-      <!-- Cabeçalho -->
       <div class="mb-5">
         <p class="text-[10px] font-bold text-blue-400 tracking-wider uppercase mb-1">Novo espaço</p>
         <h2 class="text-xl font-bold text-white tracking-tight">Criar servidor</h2>
       </div>
 
-      <!-- Formulário com upload de foto funcional -->
       <form onsubmit="handleCreateServerSubmit(event)" class="space-y-4">
         
         <input type="file" id="server-image-file" accept="image/*" class="hidden" onchange="previewServerImage(event)">
@@ -519,7 +515,7 @@
   <!-- MODAL DE RECUPERAR ACESSO (EMAILJS) -->
   <div id="recovery-modal" class="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden opacity-0 transition-opacity duration-200">
     <div class="w-full max-w-[380px] bg-[#0b1220] border border-slate-800 rounded-2xl p-6 shadow-2xl relative">
-      <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-500 hover:text-white transition-colors">
+      <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
 
@@ -549,7 +545,7 @@
   </div>
 
   <!-- NOTIFICAÇÃO TOAST -->
-  <div id="toast" class="fixed bottom-24 right-5 bg-blue-600 text-white px-4 py-3 rounded-xl shadow-lg border border-blue-400/30 flex items-center gap-3 translate-y-20 opacity-0 transition-all duration-300 z-50">
+  <div id="toast" class="fixed bottom-20 right-5 bg-blue-600 text-white px-4 py-3 rounded-xl shadow-lg border border-blue-400/30 flex items-center gap-3 translate-y-20 opacity-0 transition-all duration-300 z-50">
     <i id="toast-icon" data-lucide="info" class="w-5 h-5"></i>
     <span id="toast-message" class="text-sm font-medium"></span>
   </div>
@@ -811,10 +807,10 @@
       const toastIcon = document.getElementById('toast-icon');
 
       if (isSuccess) {
-        toast.className = "fixed bottom-24 right-5 bg-blue-600 text-white px-4 py-3 rounded-xl shadow-lg border border-blue-400/30 flex items-center gap-3 translate-y-0 opacity-100 transition-all duration-300 z-50";
+        toast.className = "fixed bottom-20 right-5 bg-blue-600 text-white px-4 py-3 rounded-xl shadow-lg border border-blue-400/30 flex items-center gap-3 translate-y-0 opacity-100 transition-all duration-300 z-50";
         toastIcon.setAttribute('data-lucide', 'check-circle-2');
       } else {
-        toast.className = "fixed bottom-24 right-5 bg-rose-600 text-white px-4 py-3 rounded-xl shadow-lg border border-rose-400/30 flex items-center gap-3 translate-y-0 opacity-100 transition-all duration-300 z-50";
+        toast.className = "fixed bottom-20 right-5 bg-rose-600 text-white px-4 py-3 rounded-xl shadow-lg border border-rose-400/30 flex items-center gap-3 translate-y-0 opacity-100 transition-all duration-300 z-50";
         toastIcon.setAttribute('data-lucide', 'alert-triangle');
       }
       lucide.createIcons();
@@ -822,7 +818,7 @@
       toastMessage.textContent = message;
 
       setTimeout(() => {
-        toast.classList.add('translate-y-24', 'opacity-0');
+        toast.classList.add('translate-y-20', 'opacity-0');
       }, 3500);
     }
 
@@ -952,7 +948,7 @@
           showToast(`Link de recuperação enviado para ${userEmail}!`);
         }
 
-        closeModal();
+    closeModal();
         emailInput.value = '';
       } catch (error) {
         console.error("Erro ao enviar e-mail:", error);
