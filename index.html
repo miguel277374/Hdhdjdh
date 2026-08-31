@@ -1,1 +1,3037 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VaibCod</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    html, body {
+      font-family: 'Inter', sans-serif;
+      background-color: #060911;
+      color: #f8fafc;
+      height: 100vh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    *, *:before, *:after {
+      box-sizing: inherit;
+    }
+
+    .bg-grid-pattern { 
+      background-size: 40px 40px; 
+      background-image: linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px); 
+    }
+
+    .glow-top-left { 
+      position: fixed; 
+      top: -150px; 
+      left: -150px; 
+      width: 450px; 
+      height: 450px; 
+      background: radial-gradient(circle, rgba(37, 99, 235, 0.25) 0%, rgba(14, 165, 233, 0.08) 45%, rgba(6, 9, 17, 0) 70%); 
+      filter: blur(60px); 
+      pointer-events: none; 
+      z-index: 1; 
+    }
+
+    .glow-bottom-right { 
+      position: fixed; 
+      bottom: -150px; 
+      right: -150px; 
+      width: 450px; 
+      height: 450px; 
+      background: radial-gradient(circle, rgba(29, 78, 216, 0.2) 0%, rgba(59, 130, 246, 0.05) 50%, rgba(6, 9, 17, 0) 75%); 
+      filter: blur(70px); 
+      pointer-events: none; 
+      z-index: 1; 
+    }
+
+    .card-glass { background: rgba(13, 20, 36, 0.75); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 40px rgba(37, 99, 235, 0.1); }
+    .input-dark { background-color: #090e1a; border: 1px solid #1e293b; color: #f8fafc; transition: all 0.2s ease; }
+    .input-dark:focus-within { border-color: #3b82f6; box-shadow: 0 0 0 1px #3b82f6, 0 0 15px rgba(59, 130, 246, 0.2); }
+    .input-dark.input-error { border-color: #ef4444 !important; box-shadow: 0 0 0 1px #ef4444, 0 0 15px rgba(239, 68, 68, 0.2) !important; }
+    .input-dark.input-success { border-color: #10b981 !important; box-shadow: 0 0 0 1px #10b981, 0 0 15px rgba(16, 185, 129, 0.2) !important; }
+    .btn-primary { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); transition: all 0.2s ease; }
+    .btn-primary:hover:not(:disabled) { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); box-shadow: 0 0 20px rgba(37, 99, 235, 0.4); transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
+    .app-sidebar { background-color: #070b14; border-right: 1px solid rgba(255, 255, 255, 0.04); }
+    .app-main-menu { background-color: #0b101c; }
+    .menu-card-item { background-color: #121827; border: 1px solid rgba(255, 255, 255, 0.03); transition: all 0.2s ease; }
+    .menu-card-item:hover { background-color: #162035; border-color: rgba(255, 255, 255, 0.08); }
+    .support-card { background: linear-gradient(135deg, #281245 0%, #150d26 100%); border: 1px solid rgba(168, 85, 247, 0.25); transition: all 0.2s ease; }
+    .support-card:hover { border-color: rgba(168, 85, 247, 0.45); box-shadow: 0 0 20px rgba(168, 85, 247, 0.15); }
+    .bottom-bar { background-color: #070a12; border-top: 1px solid rgba(255, 255, 255, 0.05); }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+
+    .crop-viewport-circle {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      border: 3px solid #3b82f6;
+      box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.75);
+      position: absolute;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .crop-viewport-banner {
+      width: 300px;
+      height: 112px;
+      border-radius: 12px;
+      border: 3px solid #3b82f6;
+      box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.75);
+      position: absolute;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .crop-viewport-server-banner {
+      width: 320px;
+      height: 140px;
+      border-radius: 12px;
+      border: 3px solid #3b82f6;
+      box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.75);
+      position: absolute;
+      pointer-events: none;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body class="bg-[#060911] h-screen w-screen flex flex-col justify-between relative overflow-hidden">
+
+  <div id="auth-screen" class="bg-grid-pattern fixed inset-0 flex items-center justify-center p-4 text-slate-100 z-30 overflow-hidden">
+    <div class="glow-top-left"></div>
+    <div class="glow-bottom-right"></div>
+
+    <div id="auth-card" class="w-full max-w-[420px] card-glass rounded-2xl p-6 sm:p-8 relative z-20 my-auto">
+      <div class="bg-[#080d1a] p-1 rounded-xl flex mb-8 border border-slate-800/80 shadow-inner">
+        <button id="tab-login" onclick="switchTab('login')" class="flex-1 py-2.5 rounded-lg text-sm font-medium transition-all text-white bg-[#1a2436] shadow-sm border border-slate-700/50">
+          Entrar
+        </button>
+        <button id="tab-register" onclick="switchTab('register')" class="flex-1 py-2.5 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white">
+          Criar conta
+        </button>
+      </div>
+
+      <div id="form-login" class="space-y-6">
+        <div>
+          <p class="text-[11px] font-bold tracking-wider text-blue-400 uppercase mb-1 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+            Bem-vindo ao VaibCod
+          </p>
+          <h1 class="text-2xl font-bold text-white tracking-tight">Bom ter você aqui.</h1>
+          <p class="text-sm text-slate-400 mt-1">Entre e continue de onde parou.</p>
+        </div>
+
+        <form onsubmit="handleAuth(event, 'login')" class="space-y-4">
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold text-slate-300">E-mail</label>
+            <div class="input-dark rounded-xl flex items-center px-3.5 py-3">
+              <i data-lucide="mail" class="w-5 h-5 text-slate-500 mr-3 shrink-0"></i>
+              <input type="email" id="login-identifier" required placeholder="voce@exemplo.com" class="bg-transparent border-none outline-none w-full text-sm placeholder-slate-600">
+            </div>
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold text-slate-300">Senha</label>
+            <div class="input-dark rounded-xl flex items-center px-3.5 py-3">
+              <i data-lucide="lock" class="w-5 h-5 text-slate-500 mr-3 shrink-0"></i>
+              <input id="login-password" type="password" required placeholder="Mínimo de 8 caracteres" class="bg-transparent border-none outline-none w-full text-sm placeholder-slate-600">
+              <button type="button" onclick="togglePasswordVisibility('login-password', 'eye-login')" class="text-slate-500 hover:text-slate-300 transition-colors">
+                <i id="eye-login" data-lucide="eye" class="w-5 h-5"></i>
+              </button>
+            </div>
+          </div>
+
+          <button id="btn-login-submit" type="submit" class="w-full btn-primary text-white font-medium py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 text-sm shadow-lg shadow-blue-600/25 mt-2">
+            <span id="login-btn-text">Continuar</span>
+            <i id="login-btn-icon" data-lucide="arrow-right" class="w-4 h-4"></i>
+            <div id="login-spinner" class="hidden w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+          </button>
+        </form>
+
+        <div class="text-center pt-1">
+          <button onclick="openModal()" class="text-xs font-medium text-slate-400 hover:text-blue-400 transition-colors">
+            Esqueci minha senha
+          </button>
+        </div>
+      </div>
+
+      <div id="form-register" class="space-y-6 hidden">
+        <div>
+          <p class="text-[11px] font-bold tracking-wider text-blue-400 uppercase mb-1 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+            Bem-vindo ao VaibCod
+          </p>
+          <h1 class="text-2xl font-bold text-white tracking-tight">Crie seu espaço.</h1>
+          <p class="text-sm text-slate-400 mt-1">Escolha seu nick único e comece a fazer parte.</p>
+        </div>
+
+        <form onsubmit="handleAuth(event, 'register')" class="space-y-4">
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold text-slate-300">Nome de usuário</label>
+            <div id="username-container" class="input-dark rounded-xl flex items-center px-3.5 py-3">
+              <i data-lucide="user" class="w-5 h-5 text-slate-500 mr-3 shrink-0"></i>
+              <input type="text" id="register-username" required placeholder="seu.nick" oninput="handleUsernameInput(this)" class="bg-transparent border-none outline-none w-full text-sm placeholder-slate-600">
+              <div id="username-status-icon" class="shrink-0"></div>
+            </div>
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold text-slate-300">E-mail</label>
+            <div id="email-container" class="input-dark rounded-xl flex items-center px-3.5 py-3">
+              <i data-lucide="mail" class="w-5 h-5 text-slate-500 mr-3 shrink-0"></i>
+              <input type="email" id="register-email" required placeholder="voce@exemplo.com" class="bg-transparent border-none outline-none w-full text-sm placeholder-slate-600">
+            </div>
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold text-slate-300">Senha</label>
+            <div class="input-dark rounded-xl flex items-center px-3.5 py-3">
+              <i data-lucide="lock" class="w-5 h-5 text-slate-500 mr-3 shrink-0"></i>
+              <input id="register-password" type="password" required minlength="6" placeholder="Mínimo de 6 caracteres" class="bg-transparent border-none outline-none w-full text-sm placeholder-slate-600">
+              <button type="button" onclick="togglePasswordVisibility('register-password', 'eye-register')" class="text-slate-500 hover:text-slate-300 transition-colors">
+                <i id="eye-register" data-lucide="eye" class="w-5 h-5"></i>
+              </button>
+            </div>
+          </div>
+
+          <button id="btn-register-submit" type="submit" class="w-full btn-primary text-white font-medium py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 text-sm shadow-lg shadow-blue-600/25 mt-2">
+            <span id="register-btn-text">Continuar</span>
+            <i id="register-btn-icon" data-lucide="arrow-right" class="w-4 h-4"></i>
+            <div id="register-spinner" class="hidden w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="main-app-screen" class="hidden fixed inset-0 z-40 bg-[#060911] flex flex-col h-full w-full overflow-hidden">
+    <div class="flex-1 flex overflow-hidden">
+      <aside class="w-[72px] app-sidebar flex flex-col items-center py-4 gap-3 shrink-0 z-10">
+        <div class="relative group">
+          <div id="home-active-indicator" class="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-blue-500 rounded-r-full"></div>
+          <button onclick="switchToHomeView()" class="w-12 h-12 rounded-2xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-600/30 hover:rounded-xl transition-all" title="Mensagens Diretas">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              <path d="M8 10h.01"></path>
+              <path d="M12 10h.01"></path>
+              <path d="M16 10h.01"></path>
+            </svg>
+          </button>
+        </div>
+
+        <div id="servers-list-container" class="flex flex-col gap-3 items-center w-full"></div>
+
+        <button onclick="openCreateServerModal()" class="w-12 h-12 rounded-2xl bg-[#0f1624] hover:bg-blue-600/20 border border-slate-800 hover:border-blue-500/50 flex items-center justify-center text-blue-400 hover:rounded-xl transition-all group" title="Criar Servidor">
+          <i data-lucide="plus" class="w-6 h-6 group-hover:scale-110 transition-transform"></i>
+        </button>
+
+        <button onclick="openJoinServerModal()" title="Entrar em um servidor" class="w-12 h-12 rounded-2xl bg-[#0f1624] hover:bg-blue-600/20 border border-slate-800 hover:border-blue-500/50 flex items-center justify-center text-blue-400 hover:rounded-xl transition-all group">
+          <i data-lucide="log-in" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
+        </button>
+      </aside>
+
+      <main id="home-view" class="flex-1 app-main-menu flex flex-col p-4 sm:p-6 overflow-y-auto custom-scrollbar pb-28">
+        <div class="flex items-center justify-between mb-5">
+          <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white">Mensagens</h1>
+        </div>
+
+        <div class="space-y-2.5 max-w-xl">
+          <button onclick="openFriendsModal()" class="w-full menu-card-item rounded-xl p-3.5 flex items-center justify-between text-left group">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-lg bg-slate-800/80 flex items-center justify-center text-slate-300 group-hover:text-white transition-colors">
+                <i data-lucide="user-plus" class="w-4 h-4"></i>
+              </div>
+              <span class="font-medium text-slate-200 text-sm group-hover:text-white">Amigos</span>
+            </div>
+            <span id="friends-badge-count" class="hidden px-2 py-0.5 rounded bg-rose-600/20 border border-rose-500/30 text-rose-400 text-[10px] font-bold">0</span>
+          </button>
+
+          <button onclick="showToast('Loja VaibCod em breve!')" class="w-full menu-card-item rounded-xl p-3.5 flex items-center justify-between text-left group">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-lg bg-slate-800/80 flex items-center justify-center text-slate-300 group-hover:text-white transition-colors">
+                <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+              </div>
+              <span class="font-medium text-slate-200 text-sm group-hover:text-white">Loja</span>
+            </div>
+            <span class="px-2 py-0.5 rounded bg-blue-600/20 border border-blue-500/30 text-blue-400 text-[9px] font-bold tracking-wider uppercase">PROMO</span>
+          </button>
+
+          <button onclick="showToast('Obrigado pelo apoio ao VaibCod!')" class="w-full support-card rounded-xl p-3.5 flex items-center justify-between text-left group">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-lg bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-300">
+                <i data-lucide="heart" class="w-4 h-4"></i>
+              </div>
+              <span class="font-medium text-purple-100 text-sm">Apoiar o VaibCod</span>
+            </div>
+            <span class="px-2 py-0.5 rounded bg-purple-900/60 border border-purple-400/40 text-purple-300 text-[9px] font-bold tracking-wider uppercase">AJUDE</span>
+          </button>
+        </div>
+
+        <div class="mt-6 max-w-xl">
+          <div class="flex items-center justify-between mb-2.5 px-1">
+            <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Mensagens Diretas</span>
+            <button onclick="openFriendsModal()" class="text-slate-500 hover:text-slate-200 transition-colors">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <div id="dm-list-container" class="space-y-2">
+            <div class="py-6 text-center text-slate-600 text-xs flex flex-col items-center gap-2 border border-dashed border-slate-800/80 rounded-xl">
+              <i data-lucide="message-square" class="w-5 h-5 text-slate-700"></i>
+              <span>Sua caixa de mensagens diretas está vazia.</span>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <main id="server-view" class="hidden flex-1 app-main-menu flex flex-col overflow-y-auto custom-scrollbar pb-28">
+        <div id="server-header-banner" class="w-full h-36 bg-[#141d30] relative bg-cover bg-center border-b border-slate-800/60 flex items-end p-4">
+          <div class="absolute inset-0 bg-gradient-to-t from-[#0b101c] via-transparent to-black/30"></div>
+          <div class="relative z-10 flex items-center justify-between w-full">
+            <div class="flex items-center gap-3">
+              <div id="server-header-icon" class="w-12 h-12 rounded-2xl bg-blue-600 border-2 border-slate-700 text-white font-bold flex items-center justify-center text-lg shadow-lg overflow-hidden bg-cover bg-center">S</div>
+              <div>
+                <h1 id="server-view-title" class="text-xl sm:text-2xl font-bold tracking-tight text-white drop-shadow">Nome do Servidor</h1>
+                <p id="server-view-members" class="text-[11px] text-slate-300 mt-0.5 font-medium select-none drop-shadow flex items-center gap-1.5">
+                  <i data-lucide="users" class="w-3.5 h-3.5 text-blue-400"></i>
+                  <span id="server-members-count-text">0 membros</span>
+                </p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <button onclick="showToast('Criar categoria')" class="p-2 rounded-xl bg-slate-900/60 backdrop-blur-md text-slate-300 hover:text-white hover:bg-slate-800/80 transition-colors border border-slate-700/50">
+                <i data-lucide="plus" class="w-5 h-5"></i>
+              </button>
+              <button onclick="openServerSettingsModal()" class="p-2 rounded-xl bg-slate-900/60 backdrop-blur-md text-slate-300 hover:text-white hover:bg-slate-800/80 transition-colors border border-slate-700/50" title="Configurações do Servidor">
+                <i data-lucide="settings" class="w-5 h-5"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex-1 flex flex-col items-center justify-center text-center p-6">
+          <div class="w-full max-w-md p-8 rounded-2xl border border-dashed border-slate-800/90 bg-[#080d1a]/50 flex flex-col items-center justify-center gap-3">
+            <button onclick="showToast('Criar nova categoria')" class="w-12 h-12 rounded-2xl bg-slate-800/70 hover:bg-blue-600/30 border border-slate-700 hover:border-blue-500/60 flex items-center justify-center text-blue-400 transition-all group shadow-inner">
+              <i data-lucide="plus" class="w-6 h-6 group-hover:scale-110 transition-transform"></i>
+            </button>
+            <h3 class="text-base font-bold text-slate-200 mt-2">Use o + para criar uma categoria</h3>
+            <p class="text-xs text-slate-500">Depois, adicione canais de texto ou voz.</p>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div id="user-profile-menu" class="hidden absolute bottom-20 left-4 w-72 bg-[#0c1220] border border-slate-800/90 rounded-2xl p-4 shadow-2xl z-50 transition-all duration-200 opacity-0 transform translate-y-2">
+      <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-800/80">
+        <div class="relative">
+          <div id="popover-user-avatar" class="w-12 h-12 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-base border border-blue-400/40 overflow-hidden bg-cover bg-center">M</div>
+          <span id="popover-status-dot" class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-[#0c1220] rounded-full"></span>
+        </div>
+        <div class="flex flex-col min-w-0">
+          <span id="popover-user-name" class="font-bold text-white text-base truncate">User</span>
+          <span id="popover-user-handle" class="text-xs text-slate-400 truncate">@user</span>
+        </div>
+      </div>
+
+      <div class="space-y-1">
+        <button onclick="openEditProfileModal()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors">
+          <i data-lucide="pencil" class="w-4 h-4 text-slate-400"></i>
+          <span>Editar perfil</span>
+        </button>
+
+        <div class="pt-2 pb-1">
+          <div class="text-[10px] font-bold text-slate-500 uppercase px-3 mb-1 tracking-wider">Status</div>
+          
+          <button onclick="setUserStatus('online')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors">
+            <div class="flex items-center gap-2.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+              <span>Online</span>
+            </div>
+            <i id="status-check-online" data-lucide="check" class="w-4 h-4 text-blue-400"></i>
+          </button>
+
+          <button onclick="setUserStatus('dnd')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors">
+            <div class="flex items-center gap-2.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+              <span>Não perturbe</span>
+            </div>
+            <i id="status-check-dnd" data-lucide="check" class="w-4 h-4 text-blue-400 hidden"></i>
+          </button>
+
+          <button onclick="setUserStatus('offline')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors">
+            <div class="flex items-center gap-2.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-slate-500"></span>
+              <span>Offline</span>
+            </div>
+            <i id="status-check-offline" data-lucide="check" class="w-4 h-4 text-blue-400 hidden"></i>
+          </button>
+        </div>
+
+        <div class="pt-2 border-t border-slate-800/80">
+          <button onclick="handleLogout()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors">
+            <i data-lucide="log-out" class="w-4 h-4 text-rose-400"></i>
+            <span>Desconectar da conta</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <footer class="absolute bottom-0 left-0 right-0 h-16 bottom-bar px-3 sm:px-4 flex items-center justify-between shrink-0 z-30 shadow-2xl">
+      <div class="flex items-center gap-2.5">
+        <div class="relative cursor-pointer" onclick="toggleUserProfileMenu(event)" title="Abrir menu do perfil">
+          <div id="user-avatar-initial" class="w-9 h-9 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-xs border border-blue-400/40 overflow-hidden bg-cover bg-center">M</div>
+          <span id="footer-status-dot" class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-[#070a12] rounded-full"></span>
+        </div>
+      </div>
+
+      <div class="bg-[#101726] border border-slate-800/90 rounded-xl p-1 flex items-center gap-1 shadow-inner">
+        <button id="btn-mic" onclick="toggleAudioState('mic')" title="Alternar Microfone" class="px-2 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all flex items-center gap-1 group">
+          <i id="icon-mic" data-lucide="mic" class="w-4 h-4"></i>
+          <i data-lucide="chevron-down" class="w-3 h-3 text-slate-500 group-hover:text-slate-300"></i>
+        </button>
+
+        <div class="w-[1px] h-3.5 bg-slate-800"></div>
+
+        <button id="btn-headphones" onclick="toggleAudioState('headphones')" title="Alternar Áudio" class="px-2 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all flex items-center gap-1 group">
+          <i id="icon-headphones" data-lucide="headphones" class="w-4 h-4"></i>
+          <i data-lucide="chevron-down" class="w-3 h-3 text-slate-500 group-hover:text-slate-300"></i>
+        </button>
+
+        <div class="w-[1px] h-3.5 bg-slate-800"></div>
+
+        <button onclick="showToast('Configurações do aplicativo!')" title="Configurações" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all">
+          <i data-lucide="settings" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- MODAL AMIGOS -->
+  <div id="friends-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden opacity-0 transition-opacity duration-200">
+    <div class="w-full max-w-[500px] bg-[#0c1220] border border-slate-800/90 rounded-2xl p-6 shadow-2xl relative text-slate-100 max-h-[90vh] overflow-y-auto custom-scrollbar">
+      <button onclick="closeFriendsModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white transition-colors z-10">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="mb-5">
+        <p class="text-[10px] font-bold text-blue-400 tracking-wider uppercase mb-1">Conexões</p>
+        <h2 class="text-xl font-bold text-white tracking-tight">Amigos</h2>
+      </div>
+
+      <div class="flex border-b border-slate-800/80 mb-5 gap-4">
+        <button id="friends-tab-btn-list" onclick="switchFriendsTab('list')" class="pb-2 text-xs font-bold text-blue-400 border-b-2 border-blue-500 transition-all flex items-center gap-1.5">
+          <i data-lucide="users" class="w-3.5 h-3.5"></i>
+          Lista de Amigos
+        </button>
+        <button id="friends-tab-btn-add" onclick="switchFriendsTab('add')" class="pb-2 text-xs font-semibold text-slate-400 border-b-2 border-transparent hover:text-slate-200 transition-all flex items-center gap-1.5">
+          <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
+          Adicionar Amigo
+        </button>
+        <button id="friends-tab-btn-pending" onclick="switchFriendsTab('pending')" class="pb-2 text-xs font-semibold text-slate-400 border-b-2 border-transparent hover:text-slate-200 transition-all flex items-center gap-1.5 relative">
+          <i data-lucide="bell" class="w-3.5 h-3.5"></i>
+          Solicitações
+          <span id="friends-pending-badge" class="hidden absolute -top-1 -right-2 bg-rose-600 text-white text-[9px] font-bold px-1.5 py-0.2 rounded-full">0</span>
+        </button>
+      </div>
+
+      <div id="friends-tab-list" class="space-y-3">
+        <div id="friends-list-container" class="space-y-2 max-h-64 overflow-y-auto custom-scrollbar pr-1">
+          <div class="text-center py-8 text-slate-500 text-xs">Carregando amigos...</div>
+        </div>
+      </div>
+
+      <div id="friends-tab-add" class="hidden space-y-4">
+        <div class="space-y-2">
+          <label class="text-xs font-semibold text-slate-300">ADICIONAR PELO NOME DE USUÁRIO EXATO</label>
+          <div class="input-dark rounded-xl flex items-center px-3.5 py-3">
+            <i data-lucide="at-sign" class="w-5 h-5 text-slate-500 mr-3 shrink-0"></i>
+            <input type="text" id="add-friend-username-input" placeholder="exemplo.usuario" class="bg-transparent border-none outline-none w-full text-sm placeholder-slate-600 text-slate-100">
+          </div>
+          <p class="text-[11px] text-slate-500">Insira o nick exato da pessoa para enviar uma solicitação de amizade.</p>
+        </div>
+
+        <button type="button" onclick="sendFriendRequest()" class="w-full btn-primary text-white py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-blue-600/20">
+          <i data-lucide="user-plus" class="w-4 h-4"></i>
+          Enviar Solicitação de Amizade
+        </button>
+      </div>
+
+      <div id="friends-tab-pending" class="hidden space-y-3">
+        <div id="friends-pending-container" class="space-y-2 max-h-64 overflow-y-auto custom-scrollbar pr-1">
+          <div class="text-center py-8 text-slate-500 text-xs">Nenhuma solicitação pendente.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL EDITAR PERFIL -->
+  <div id="edit-profile-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden opacity-0 transition-opacity duration-200">
+    <div class="w-full max-w-[500px] bg-[#0c1220] border border-slate-800/90 rounded-2xl p-6 shadow-2xl relative text-slate-100 max-h-[90vh] overflow-y-auto custom-scrollbar">
+      <button onclick="closeEditProfileModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white transition-colors z-10">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="mb-4">
+        <p class="text-[10px] font-bold text-blue-400 tracking-wider uppercase mb-1">Personalização</p>
+        <h2 class="text-xl font-bold text-white tracking-tight">Perfil de Usuário</h2>
+      </div>
+
+      <form onsubmit="handleSaveProfile(event)" class="space-y-5">
+        <div class="relative mb-8">
+          <input type="file" id="edit-banner-file" accept="image/*" class="hidden" onchange="previewEditImage(event, 'banner')">
+          <input type="file" id="edit-avatar-file" accept="image/*" class="hidden" onchange="previewEditImage(event, 'avatar')">
+
+          <div onclick="document.getElementById('edit-banner-file').click()" id="edit-banner-preview" class="w-full h-28 rounded-xl bg-[#141d30] border border-slate-700/50 flex flex-col items-center justify-center text-slate-400 hover:border-blue-500 cursor-pointer transition-all relative overflow-hidden bg-cover bg-center group">
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+              <span class="text-xs font-semibold text-white flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4"></i> Mudar Banner</span>
+            </div>
+            <span id="banner-placeholder-text" class="text-xs text-slate-500">Mudar Banner</span>
+          </div>
+
+          <div onclick="document.getElementById('edit-avatar-file').click()" class="absolute -bottom-6 left-4 w-20 h-20 rounded-full border-4 border-[#0c1220] bg-blue-600 flex items-center justify-center text-white font-bold text-2xl cursor-pointer overflow-hidden shadow-lg group">
+            <div id="edit-avatar-preview" class="w-full h-full flex items-center justify-center bg-cover bg-center">M</div>
+            <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+              <i data-lucide="camera" class="w-6 h-6 text-white"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-2 space-y-4">
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold text-slate-300">NOME EXIBIDO</label>
+            <div class="input-dark rounded-xl flex items-center px-3.5 py-3">
+              <i data-lucide="type" class="w-5 h-5 text-slate-500 mr-3 shrink-0"></i>
+              <input type="text" id="edit-displayname-input" placeholder="Seu nome no chat" class="bg-transparent border-none outline-none w-full text-sm placeholder-slate-600 text-slate-100">
+            </div>
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold text-slate-300">NOME DE USUÁRIO</label>
+            <div id="edit-username-container" class="input-dark rounded-xl flex items-center px-3.5 py-3">
+              <i data-lucide="at-sign" class="w-5 h-5 text-slate-500 mr-3 shrink-0"></i>
+              <input type="text" id="edit-username-input" required placeholder="seu.nick" oninput="handleEditUsernameInput(this)" class="bg-transparent border-none outline-none w-full text-sm placeholder-slate-600 text-slate-100">
+              <div id="edit-username-status-icon" class="shrink-0"></div>
+            </div>
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold text-slate-300">SOBRE MIM</label>
+            <div class="input-dark rounded-xl px-3.5 py-3">
+              <textarea id="edit-bio-input" rows="3" maxlength="160" placeholder="Escreva algo sobre você..." class="bg-transparent border-none outline-none w-full text-sm placeholder-slate-600 resize-none custom-scrollbar text-slate-100"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-800/80">
+          <button type="button" onclick="closeEditProfileModal()" class="px-5 py-2.5 text-xs font-semibold text-slate-300 hover:text-white transition-colors">Cancelar</button>
+          <button type="submit" id="btn-save-profile" class="btn-primary px-6 py-2.5 rounded-xl text-xs font-bold text-white shadow-md shadow-blue-600/30 flex items-center gap-2">
+            <span id="save-profile-text">Salvar alterações</span>
+            <div id="save-profile-spinner" class="hidden w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL CONFIGURAÇÕES DO SERVIDOR (GERAL, CONVITES, ADMINISTRAÇÃO, BANIMENTOS, SEGURANÇA) -->
+  <div id="server-settings-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden opacity-0 transition-opacity duration-200">
+    <div class="w-full max-w-[540px] bg-[#0c1220] border border-slate-800/90 rounded-2xl p-6 shadow-2xl relative text-slate-100 max-h-[92vh] overflow-y-auto custom-scrollbar">
+      <button onclick="closeServerSettingsModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white transition-colors z-20">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <!-- CABEÇALHO DO SERVIDOR (IGUAL ÀS FOTOS) -->
+      <div class="flex items-center gap-3.5 mb-5 p-3.5 bg-[#080d1a] border border-slate-800/80 rounded-2xl">
+        <div id="modal-server-header-icon" class="w-12 h-12 rounded-2xl bg-blue-600 text-white font-bold flex items-center justify-center text-xl shadow-md shrink-0 bg-cover bg-center border border-blue-400/30">O</div>
+        <div class="flex flex-col min-w-0">
+          <span class="text-[10px] font-bold text-blue-400 tracking-wider uppercase">CONFIGURAÇÕES DO SERVIDOR</span>
+          <h2 id="modal-server-header-title" class="text-lg font-bold text-white tracking-tight truncate">Opa</h2>
+          <span id="modal-server-header-sub" class="text-xs text-slate-400">2 membros · 0 canais</span>
+        </div>
+      </div>
+
+      <!-- ABAS NAVEGAÇÃO HORIZONTAL -->
+      <div class="flex border-b border-slate-800/80 mb-5 overflow-x-auto custom-scrollbar gap-2 pb-1 text-xs">
+        <button id="server-tab-btn-general" onclick="switchServerSettingsTab('general')" class="px-3 py-2 font-bold text-blue-400 bg-[#162035] rounded-lg transition-all whitespace-nowrap">
+          Geral
+        </button>
+        <button id="server-tab-btn-invites" onclick="switchServerSettingsTab('invites')" class="px-3 py-2 font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all whitespace-nowrap">
+          Convites
+        </button>
+        <button id="server-tab-btn-admin" onclick="switchServerSettingsTab('admin')" class="px-3 py-2 font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all whitespace-nowrap">
+          Administração
+        </button>
+        <button id="server-tab-btn-bans" onclick="switchServerSettingsTab('bans')" class="px-3 py-2 font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all whitespace-nowrap">
+          Banimentos
+        </button>
+        <button id="server-tab-btn-security" onclick="switchServerSettingsTab('security')" class="px-3 py-2 font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all whitespace-nowrap">
+          Segurança
+        </button>
+      </div>
+
+      <!-- ABA 1: GERAL -->
+      <div id="server-tab-general">
+        <form onsubmit="handleSaveServerSettings(event)" class="space-y-5">
+          <div class="relative mb-8">
+            <input type="file" id="edit-server-banner-file" accept="image/*" class="hidden" onchange="previewServerImageUpload(event, 'banner')">
+            <input type="file" id="edit-server-icon-file" accept="image/*" class="hidden" onchange="previewServerImageUpload(event, 'icon')">
+
+            <div onclick="document.getElementById('edit-server-banner-file').click()" id="edit-server-banner-preview" class="w-full h-32 rounded-xl bg-[#141d30] border border-slate-700/50 flex flex-col items-center justify-center text-slate-400 hover:border-blue-500 cursor-pointer transition-all relative overflow-hidden bg-cover bg-center group">
+              <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                <span class="text-xs font-semibold text-white flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4"></i> Mudar Banner do Servidor</span>
+              </div>
+              <span id="server-banner-placeholder-text" class="text-xs text-slate-500">Mudar Banner do Servidor</span>
+            </div>
+
+            <div onclick="document.getElementById('edit-server-icon-file').click()" class="absolute -bottom-6 left-4 w-20 h-20 rounded-2xl border-4 border-[#0c1220] bg-blue-600 flex items-center justify-center text-white font-bold text-2xl cursor-pointer overflow-hidden shadow-lg group">
+              <div id="edit-server-icon-preview" class="w-full h-full flex items-center justify-center bg-cover bg-center">S</div>
+              <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                <i data-lucide="camera" class="w-6 h-6 text-white"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-2 space-y-4">
+            <div class="space-y-1.5">
+              <label class="text-xs font-semibold text-slate-300">NOME DO SERVIDOR</label>
+              <div class="input-dark rounded-xl flex items-center px-3.5 py-3">
+                <i data-lucide="server" class="w-5 h-5 text-slate-500 mr-3 shrink-0"></i>
+                <input type="text" id="edit-servername-input" required placeholder="Nome do Servidor" class="bg-transparent border-none outline-none w-full text-sm placeholder-slate-600 text-slate-100">
+              </div>
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="text-xs font-semibold text-slate-300">SEU APELIDO NESTE SERVIDOR</label>
+              <div class="input-dark rounded-xl flex items-center px-3.5 py-3">
+                <i data-lucide="user-check" class="w-5 h-5 text-slate-500 mr-3 shrink-0"></i>
+                <input type="text" id="edit-server-nickname-input" placeholder="Apelido exclusivo para este servidor" class="bg-transparent border-none outline-none w-full text-sm placeholder-slate-600 text-slate-100">
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-800/80">
+            <button type="button" onclick="closeServerSettingsModal()" class="px-5 py-2.5 text-xs font-semibold text-slate-300 hover:text-white transition-colors">Cancelar</button>
+            <button type="submit" id="btn-save-server-settings" class="btn-primary px-6 py-2.5 rounded-xl text-xs font-bold text-white shadow-md shadow-blue-600/30 flex items-center gap-2">
+              <span id="save-server-settings-text">Salvar alterações</span>
+              <div id="save-server-settings-spinner" class="hidden w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- ABA 2: CONVITES -->
+      <div id="server-tab-invites" class="hidden space-y-5">
+        <div class="bg-[#080d1a] border border-slate-800/80 rounded-xl p-4 space-y-3">
+          <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
+            <i data-lucide="plus-circle" class="w-4 h-4 text-blue-400"></i>
+            Criar novo convite
+          </h3>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1">
+              <label class="text-[11px] font-semibold text-slate-400">Expiração</label>
+              <select id="invite-expire-select" class="w-full bg-[#0c1220] border border-slate-700/60 text-slate-200 text-xs rounded-lg px-2.5 py-2 outline-none">
+                <option value="never">Nunca expira</option>
+                <option value="1d">1 dia</option>
+                <option value="7d">7 dias</option>
+              </select>
+            </div>
+
+            <div class="space-y-1">
+              <label class="text-[11px] font-semibold text-slate-400">Limite de usos</label>
+              <select id="invite-uses-select" class="w-full bg-[#0c1220] border border-slate-700/60 text-slate-200 text-xs rounded-lg px-2.5 py-2 outline-none">
+                <option value="0">Sem limite</option>
+                <option value="1">1 uso</option>
+                <option value="5">5 usos</option>
+                <option value="10">10 usos</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="button" onclick="handleGenerateNewInvite()" class="w-full btn-primary text-white py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-blue-600/20">
+            <i data-lucide="link-2" class="w-3.5 h-3.5"></i>
+            Gerar Link de Convite
+          </button>
+        </div>
+
+        <div class="space-y-2">
+          <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-1">Convites Ativos</span>
+          <div id="invites-list-container" class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar pr-1">
+            <div class="text-center py-6 text-slate-500 text-xs">Carregando convites...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABA 3: ADMINISTRAÇÃO (FOTO 1) -->
+      <div id="server-tab-admin" class="hidden space-y-4">
+        <div>
+          <h3 class="text-base font-bold text-white">Administração</h3>
+          <p class="text-xs text-slate-400 mt-0.5">Hierarquia e ferramentas de moderação.</p>
+        </div>
+
+        <div class="bg-[#080d1a] border border-slate-800/90 rounded-2xl p-4 space-y-2">
+          <div class="flex items-center gap-2 text-slate-200 font-bold text-sm">
+            <i data-lucide="shield-check" class="w-4 h-4 text-blue-400"></i>
+            <span>Administração & Cargos</span>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Selecione o cargo e a cor de destaque para cada membro do servidor. Administradores podem gerenciar canais e convites.
+          </p>
+        </div>
+
+        <div class="space-y-2.5">
+          <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-1">Membros e Cargos</span>
+          <div id="admin-members-list" class="space-y-2.5 max-h-72 overflow-y-auto custom-scrollbar pr-1">
+            <div class="text-center py-6 text-slate-500 text-xs">Carregando membros...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABA 4: BANIMENTOS (FOTO 2) -->
+      <div id="server-tab-bans" class="hidden space-y-4">
+        <div>
+          <h3 class="text-base font-bold text-white">Banimentos</h3>
+          <p class="text-xs text-slate-400 mt-0.5">Revise usuários banidos e permita que voltem por convite.</p>
+        </div>
+
+        <!-- BUSCA COM LUPA PARA BANIR MEMBRO -->
+        <div class="bg-[#080d1a] border border-slate-800/90 rounded-2xl p-4 space-y-3">
+          <label class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+            <i data-lucide="user-x" class="w-4 h-4 text-rose-400"></i>
+            Banir membro do servidor
+          </label>
+          
+          <div class="input-dark rounded-xl flex items-center px-3.5 py-2.5">
+            <i data-lucide="search" class="w-4 h-4 text-slate-500 mr-2.5 shrink-0"></i>
+            <input type="text" id="search-member-ban-input" oninput="handleFilterMembersToBan(this.value)" placeholder="Buscar membro por nome para banir..." class="bg-transparent border-none outline-none w-full text-xs placeholder-slate-600 text-slate-100">
+          </div>
+
+          <div id="search-members-ban-results" class="space-y-1.5 max-h-40 overflow-y-auto custom-scrollbar">
+            <!-- Resultados de membros para banir aparecem aqui -->
+          </div>
+        </div>
+
+        <!-- LISTA DE USUÁRIOS BANIDOS -->
+        <div class="bg-[#080d1a] border border-slate-800/90 rounded-2xl p-4 space-y-3">
+          <div>
+            <h4 class="text-xs font-bold text-slate-200">Usuários banidos</h4>
+            <p class="text-[11px] text-slate-400 mt-0.5">Consulte o motivo, quando ocorreu e quem aplicou cada banimento.</p>
+          </div>
+
+          <div id="banned-users-list-container" class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar">
+            <div class="p-6 text-center text-slate-500 text-xs border border-dashed border-slate-800/80 rounded-xl">
+              <span class="font-semibold text-slate-400 block mb-1">Nenhum usuário banido</span>
+              <span class="text-[11px]">Os banimentos ativos aparecerão aqui.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABA 5: SEGURANÇA (FOTO 3) -->
+      <div id="server-tab-security" class="hidden space-y-4">
+        <div>
+          <h3 class="text-base font-bold text-rose-400">Segurança</h3>
+          <p class="text-xs text-slate-400 mt-0.5">Ações importantes e permanentes.</p>
+        </div>
+
+        <div class="bg-[#080d1a] border border-rose-950/40 rounded-2xl p-5 space-y-4">
+          <div>
+            <h4 id="security-action-title" class="text-sm font-bold text-slate-100">Excluir servidor</h4>
+            <p id="security-action-desc" class="text-xs text-slate-400 mt-1 leading-relaxed">
+              Apaga permanentemente canais, mensagens e convites. Essa ação não pode ser desfeita.
+            </p>
+          </div>
+
+          <button type="button" id="btn-security-action" onclick="handleSecurityServerAction()" class="px-5 py-2.5 rounded-xl bg-rose-900/60 hover:bg-rose-800 text-rose-100 text-xs font-bold transition-all border border-rose-700/50 flex items-center gap-2 shadow-lg shadow-rose-950/40">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+            <span id="btn-security-action-text">Excluir servidor</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL CORTAR IMAGEM -->
+  <div id="image-crop-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-[60] hidden opacity-0 transition-opacity duration-200">
+    <div class="w-full max-w-[420px] bg-[#0c1220] border border-slate-800/90 rounded-2xl p-6 shadow-2xl relative text-slate-100 flex flex-col items-center">
+      <h3 id="crop-title-text" class="text-lg font-bold text-white mb-4">Ajustar imagem</h3>
+
+      <div id="crop-workspace" class="relative w-[340px] h-[240px] bg-[#04060c] rounded-xl overflow-hidden flex items-center justify-center cursor-grab active:cursor-grabbing select-none border border-slate-800">
+        <img id="crop-target-image" src="" class="absolute max-w-none transition-transform duration-75 pointer-events-none" style="transform-origin: center center;">
+        <div id="crop-overlay-mask" class="crop-viewport-circle"></div>
+      </div>
+
+      <div class="w-full mt-5 px-2 flex items-center gap-3">
+        <i data-lucide="zoom-out" class="w-4 h-4 text-slate-400"></i>
+        <input type="range" id="crop-zoom-slider" min="0.1" max="3" step="0.01" value="1" oninput="handleCropZoomChange(this.value)" class="w-full accent-blue-500 bg-slate-800 rounded-lg cursor-pointer">
+        <i data-lucide="zoom-in" class="w-4 h-4 text-slate-400"></i>
+      </div>
+
+      <div class="flex items-center justify-end w-full gap-3 mt-6">
+        <button type="button" onclick="closeCropModal()" class="px-5 py-2.5 text-xs font-semibold text-slate-300 hover:text-white transition-colors">Cancelar</button>
+        <button type="button" onclick="applyCroppedImage()" class="btn-primary px-6 py-2.5 rounded-xl text-xs font-bold text-white shadow-md shadow-blue-600/30">Aplicar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CRIAR SERVIDOR -->
+  <div id="create-server-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-start sm:items-center justify-center p-4 pt-16 sm:pt-4 z-50 hidden opacity-0 transition-opacity duration-200">
+    <div class="w-full max-w-[420px] bg-[#0c1220] border border-slate-800/90 rounded-2xl p-6 shadow-2xl relative text-slate-100">
+      <button onclick="closeCreateServerModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white transition-colors">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="mb-5">
+        <p class="text-[10px] font-bold text-blue-400 tracking-wider uppercase mb-1">Novo espaço</p>
+        <h2 class="text-xl font-bold text-white tracking-tight">Criar servidor</h2>
+      </div>
+
+      <form onsubmit="handleCreateServerSubmit(event)" class="space-y-4">
+        <input type="file" id="server-image-file" accept="image/*" class="hidden" onchange="previewServerImage(event)">
+
+        <div class="flex flex-col items-center justify-center my-3">
+          <div onclick="document.getElementById('server-image-file').click()" id="server-image-preview-container" class="w-20 h-20 rounded-2xl bg-[#141d30] border-2 border-dashed border-blue-500/40 flex flex-col items-center justify-center text-blue-400 hover:border-blue-400 cursor-pointer transition-all shadow-inner group overflow-hidden relative">
+            <i id="server-camera-icon" data-lucide="camera" class="w-7 h-7 group-hover:scale-110 transition-transform"></i>
+            <img id="server-image-preview" src="" alt="Preview" class="hidden w-full h-full object-cover">
+          </div>
+          <span class="text-xs font-medium text-slate-400 mt-2">Adicionar foto ou GIF</span>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="text-xs font-semibold text-slate-300">Nome</label>
+          <div class="input-dark rounded-xl px-4 py-3">
+            <input type="text" id="server-name-input" required placeholder="Ex: Servidor do Proj" class="bg-transparent border-none outline-none w-full text-sm placeholder-slate-600 text-slate-100">
+          </div>
+        </div>
+
+        <p class="text-[11px] text-slate-400 leading-relaxed">Você pode criar no máximo 5 servidores. Todos são acessíveis somente por convite.</p>
+
+        <div class="flex items-center justify-end gap-3 pt-2">
+          <button type="button" onclick="closeCreateServerModal()" class="px-5 py-2.5 text-xs font-semibold text-slate-300 hover:text-white transition-colors">Cancelar</button>
+          <button type="submit" id="btn-create-server" class="btn-primary px-6 py-2.5 rounded-xl text-xs font-bold text-white shadow-md shadow-blue-600/30 flex items-center gap-2">
+            <span id="create-server-btn-text">Criar</span>
+            <div id="create-server-spinner" class="hidden w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL ENTRAR EM UM SERVIDOR -->
+  <div id="join-server-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-start sm:items-center justify-center p-4 pt-16 sm:pt-4 z-50 hidden opacity-0 transition-opacity duration-200">
+    <div class="w-full max-w-[420px] bg-[#0c1220] border border-slate-800/90 rounded-2xl p-6 shadow-2xl relative text-slate-100">
+      <button onclick="closeJoinServerModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white transition-colors">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="mb-5">
+        <h2 class="text-xl font-bold text-white tracking-tight">Entrar em um servidor</h2>
+      </div>
+
+      <form onsubmit="handleJoinServerSubmit(event)" class="space-y-5">
+        <div class="space-y-2">
+          <label class="text-xs font-medium text-slate-300">Código de convite</label>
+          <div class="input-dark rounded-xl px-4 py-3.5 focus-within:border-blue-500">
+            <input type="text" id="server-invite-code" required placeholder="Ex: vaibcod18c3s99w3" class="bg-transparent border-none outline-none w-full text-sm placeholder-slate-600 text-slate-100">
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-2">
+          <button type="button" onclick="closeJoinServerModal()" class="px-5 py-2.5 text-xs font-semibold text-slate-300 hover:text-white transition-colors">Cancelar</button>
+          <button type="submit" id="btn-join-server" class="btn-primary px-6 py-2.5 rounded-xl text-xs font-bold text-white shadow-md shadow-blue-600/30 flex items-center gap-2">
+            <span id="join-server-btn-text">Entrar</span>
+            <div id="join-server-spinner" class="hidden w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL RECUPERAÇÃO DE SENHA -->
+  <div id="recovery-modal" class="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden opacity-0 transition-opacity duration-200">
+    <div class="w-full max-w-[380px] bg-[#0b1220] border border-slate-800 rounded-2xl p-6 shadow-2xl relative">
+      <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="mb-5">
+        <p class="text-[11px] font-bold tracking-wider text-blue-400 uppercase mb-1">Segurança</p>
+        <h2 class="text-xl font-bold text-white">Recuperar acesso</h2>
+        <p class="text-xs text-slate-400 mt-1">Enviaremos um link seguro para você definir uma nova senha.</p>
+      </div>
+
+      <form onsubmit="handleRecovery(event)" class="space-y-4">
+        <div class="space-y-1.5">
+          <label class="text-xs font-semibold text-slate-300">E-mail</label>
+          <input type="email" id="recovery-email" required placeholder="Digite o seu e-mail" class="w-full input-dark rounded-xl px-3.5 py-3 text-sm outline-none">
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-2">
+          <button type="button" onclick="closeModal()" class="px-4 py-2.5 text-xs font-semibold text-slate-300 hover:text-white transition-colors">Cancelar</button>
+          <button type="submit" id="btn-recovery-submit" class="btn-primary px-4 py-2.5 rounded-xl text-xs font-semibold text-white shadow-md shadow-blue-600/20 flex items-center gap-2">
+            <span id="recovery-btn-text">Enviar link</span>
+            <div id="recovery-spinner" class="hidden w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="fixed bottom-20 right-5 bg-blue-600 text-white px-4 py-3 rounded-xl shadow-lg border border-blue-400/30 flex items-center gap-3 translate-y-20 opacity-0 transition-all duration-300 z-50">
+    <i id="toast-icon" data-lucide="info" class="w-5 h-5"></i>
+    <span id="toast-message" class="text-sm font-medium"></span>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, where, getDocs, addDoc, deleteDoc, serverTimestamp, arrayUnion, arrayRemove, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCjWu7afU7FXUgvNB5laffNGdXMyCV5J78",
+      authDomain: "vaibcod-a05cb.firebaseapp.com",
+      projectId: "vaibcod-a05cb",
+      storageBucket: "vaibcod-a05cb.firebasestorage.app",
+      messagingSenderId: "548224098288",
+      appId: "1:548224098288:web:8a3cac96457353e4718735"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    lucide.createIcons();
+
+    let currentUserData = null;
+    let userServers = [];
+    let userServersCount = 0;
+    let activeServerData = null;
+    let activeServerMembersDetailed = [];
+    let selectedServerImage = null;
+    let checkUserTimeout = null;
+    let checkEditUserTimeout = null;
+    let isMicMuted = false;
+    let isDeafened = false;
+    let toastTimeout = null;
+    let isUsernameAvailable = false;
+    let isEditUsernameAvailable = true;
+    let tempAvatar = null;
+    let tempBanner = null;
+
+    let tempServerIcon = null;
+    let tempServerBanner = null;
+
+    let cropType = 'avatar'; 
+    let cropScale = 1;
+    let minCropScale = 0.2;
+    let cropX = 0;
+    let cropY = 0;
+    let isDragging = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let imgNaturalWidth = 0;
+    let imgNaturalHeight = 0;
+    let serverUnsubscribe = null;
+    let friendsUnsubscribe = null;
+    let pendingUnsubscribe = null;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          try {
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            if (userDoc.exists()) {
+              currentUserData = userDoc.data();
+            } else {
+              const fallbackUsername = user.email.split('@')[0];
+              currentUserData = { username: fallbackUsername, displayName: fallbackUsername, bio: '', avatar: null, banner: null };
+            }
+          } catch (e) {
+            const fallbackUsername = user.email.split('@')[0];
+            currentUserData = { username: fallbackUsername, displayName: fallbackUsername, bio: '', avatar: null, banner: null };
+          }
+          openMainApp(currentUserData.displayName || currentUserData.username, currentUserData);
+          loadUserServers(user.uid);
+          setupFriendsListeners(user.uid);
+        }
+      });
+
+      document.addEventListener('click', (e) => {
+        const menu = document.getElementById('user-profile-menu');
+        const avatarBtn = document.getElementById('user-avatar-initial')?.parentElement;
+        if (menu && avatarBtn && !menu.contains(e.target) && !avatarBtn.contains(e.target)) {
+          menu.classList.add('opacity-0', 'translate-y-2');
+          setTimeout(() => menu.classList.add('hidden'), 200);
+        }
+      });
+
+      setupCropInteractions();
+    });
+
+    // SISTEMA DE AMIGOS & DMS
+    window.openFriendsModal = function() {
+      const modal = document.getElementById('friends-modal');
+      switchFriendsTab('list');
+      modal.classList.remove('hidden');
+      setTimeout(() => modal.classList.remove('opacity-0'), 10);
+    }
+
+    window.closeFriendsModal = function() {
+      const modal = document.getElementById('friends-modal');
+      modal.classList.add('opacity-0');
+      setTimeout(() => modal.classList.add('hidden'), 200);
+    }
+
+    window.switchFriendsTab = function(tab) {
+      const tabList = document.getElementById('friends-tab-list');
+      const tabAdd = document.getElementById('friends-tab-add');
+      const tabPending = document.getElementById('friends-tab-pending');
+      
+      const btnList = document.getElementById('friends-tab-btn-list');
+      const btnAdd = document.getElementById('friends-tab-btn-add');
+      const btnPending = document.getElementById('friends-tab-btn-pending');
+
+      tabList.classList.add('hidden');
+      tabAdd.classList.add('hidden');
+      tabPending.classList.add('hidden');
+
+      btnList.className = "pb-2 text-xs font-semibold text-slate-400 border-b-2 border-transparent hover:text-slate-200 transition-all flex items-center gap-1.5";
+      btnAdd.className = "pb-2 text-xs font-semibold text-slate-400 border-b-2 border-transparent hover:text-slate-200 transition-all flex items-center gap-1.5";
+      btnPending.className = "pb-2 text-xs font-semibold text-slate-400 border-b-2 border-transparent hover:text-slate-200 transition-all flex items-center gap-1.5 relative";
+
+      if (tab === 'list') {
+        tabList.classList.remove('hidden');
+        btnList.className = "pb-2 text-xs font-bold text-blue-400 border-b-2 border-blue-500 transition-all flex items-center gap-1.5";
+      } else if (tab === 'add') {
+        tabAdd.classList.remove('hidden');
+        btnAdd.className = "pb-2 text-xs font-bold text-blue-400 border-b-2 border-blue-500 transition-all flex items-center gap-1.5";
+      } else if (tab === 'pending') {
+        tabPending.classList.remove('hidden');
+        btnPending.className = "pb-2 text-xs font-bold text-blue-400 border-b-2 border-blue-500 transition-all flex items-center gap-1.5 relative";
+      }
+    }
+
+    function setupFriendsListeners(userId) {
+      if (friendsUnsubscribe) friendsUnsubscribe();
+      if (pendingUnsubscribe) pendingUnsubscribe();
+
+      const userRef = doc(db, "users", userId);
+      friendsUnsubscribe = onSnapshot(userRef, async (docSnap) => {
+        if (!docSnap.exists()) return;
+        const data = docSnap.data();
+        const friendsList = data.friends || [];
+        renderFriendsList(friendsList);
+        renderDirectMessages(friendsList);
+      });
+
+      const qPending = query(collection(db, "friendRequests"), where("toUserId", "==", userId), where("status", "==", "pending"));
+      pendingUnsubscribe = onSnapshot(qPending, (snapshot) => {
+        const pendingList = [];
+        snapshot.forEach(docSnap => {
+          pendingList.push({ id: docSnap.id, ...docSnap.data() });
+        });
+        renderPendingRequests(pendingList);
+        
+        const badgeCount = pendingList.length;
+        const badgeEl = document.getElementById('friends-pending-badge');
+        const homeBadgeEl = document.getElementById('friends-badge-count');
+        
+        if (badgeCount > 0) {
+          badgeEl.textContent = badgeCount;
+          badgeEl.classList.remove('hidden');
+          homeBadgeEl.textContent = badgeCount;
+          homeBadgeEl.classList.remove('hidden');
+        } else {
+          badgeEl.classList.add('hidden');
+          homeBadgeEl.classList.add('hidden');
+        }
+      });
+    }
+
+    async function renderFriendsList(friendIds) {
+      const container = document.getElementById('friends-list-container');
+      if (!friendIds || friendIds.length === 0) {
+        container.innerHTML = `<div class="text-center py-8 text-slate-500 text-xs border border-dashed border-slate-800 rounded-xl">Nenhum amigo na lista. Adicione alguém!</div>`;
+        return;
+      }
+
+      container.innerHTML = '';
+      for (const fId of friendIds) {
+        try {
+          const fDoc = await getDoc(doc(db, "users", fId));
+          if (!fDoc.exists()) continue;
+          const fData = fDoc.data();
+
+          const item = document.createElement('div');
+          item.className = "bg-[#080d1a] border border-slate-800 rounded-xl p-3 flex items-center justify-between";
+          
+          let avatarHtml = fData.avatar 
+            ? `<div class="w-10 h-10 rounded-full bg-blue-600 bg-cover bg-center shrink-0 border border-blue-400/30" style="background-image: url(${fData.avatar})"></div>`
+            : `<div class="w-10 h-10 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-sm shrink-0 border border-blue-400/30">${(fData.displayName || fData.username || 'U').charAt(0).toUpperCase()}</div>`;
+
+          item.innerHTML = `
+            <div class="flex items-center gap-3 min-w-0">
+              ${avatarHtml}
+              <div class="flex flex-col min-w-0">
+                <span class="font-bold text-white text-sm truncate">${fData.displayName || fData.username}</span>
+                <span class="text-xs text-slate-400 truncate">@${fData.username}</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <button type="button" onclick="showToast('Abrir chat direto em breve!')" class="p-2 rounded-lg bg-slate-800/80 hover:bg-blue-600/20 text-slate-300 hover:text-blue-400 transition-colors" title="Mensagem direta">
+                <i data-lucide="message-square" class="w-4 h-4"></i>
+              </button>
+              <button type="button" onclick="removeFriend('${fId}')" class="p-2 rounded-lg bg-slate-800/80 hover:bg-rose-500/20 text-slate-300 hover:text-rose-400 transition-colors" title="Remover amigo">
+                <i data-lucide="user-minus" class="w-4 h-4"></i>
+              </button>
+            </div>
+          `;
+          container.appendChild(item);
+        } catch (e) {
+          console.error("Erro ao carregar dados do amigo:", e);
+        }
+      }
+      lucide.createIcons();
+    }
+    
+    async function renderDirectMessages(friendIds) {
+      const container = document.getElementById('dm-list-container');
+      if (!friendIds || friendIds.length === 0) {
+        container.innerHTML = `
+          <div class="py-6 text-center text-slate-600 text-xs flex flex-col items-center gap-2 border border-dashed border-slate-800/80 rounded-xl">
+            <i data-lucide="message-square" class="w-5 h-5 text-slate-700"></i>
+            <span>Sua caixa de mensagens diretas está vazia.</span>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      container.innerHTML = '';
+      for (const fId of friendIds) {
+        try {
+          const fDoc = await getDoc(doc(db, "users", fId));
+          if (!fDoc.exists()) continue;
+          const fData = fDoc.data();
+
+          const item = document.createElement('button');
+          item.className = "w-full menu-card-item rounded-xl p-3 flex items-center justify-between text-left group transition-all relative overflow-hidden";
+          item.onclick = () => showToast('Abrir chat direto em breve!');
+          
+          let avatarHtml = fData.avatar 
+            ? `<div class="w-11 h-11 rounded-full bg-blue-600 bg-cover bg-center shrink-0 border-2 border-transparent group-hover:border-blue-500/50 transition-colors" style="background-image: url(${fData.avatar})"></div>`
+            : `<div class="w-11 h-11 rounded-full bg-[#0f172a] text-slate-200 font-bold flex items-center justify-center text-base shrink-0 border-2 border-transparent group-hover:border-blue-500/50 transition-colors shadow-inner">${(fData.displayName || fData.username || 'U').charAt(0).toUpperCase()}</div>`;
+
+          item.innerHTML = `
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 opacity-0 group-hover:opacity-100 transition-opacity rounded-l-xl"></div>
+            <div class="flex items-center gap-3.5 min-w-0 pl-1">
+              <div class="relative">
+                ${avatarHtml}
+                <span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-slate-500 border-2 border-[#121827] group-hover:border-[#162035] rounded-full transition-colors"></span>
+              </div>
+              <div class="flex flex-col min-w-0">
+                <span class="font-bold text-slate-200 text-[15px] group-hover:text-white truncate transition-colors">${fData.displayName || fData.username}</span>
+                <span class="text-xs text-slate-400 truncate transition-colors">@${fData.username}</span>
+              </div>
+            </div>
+          `;
+          container.appendChild(item);
+        } catch (e) {
+          console.error("Erro ao carregar amigo para DM:", e);
+        }
+      }
+      lucide.createIcons();
+    }
+
+    async function renderPendingRequests(requests) {
+      const container = document.getElementById('friends-pending-container');
+      if (!requests || requests.length === 0) {
+        container.innerHTML = `<div class="text-center py-8 text-slate-500 text-xs border border-dashed border-slate-800 rounded-xl">Nenhuma solicitação pendente.</div>`;
+        return;
+      }
+
+      container.innerHTML = '';
+      for (const req of requests) {
+        try {
+          const fromDoc = await getDoc(doc(db, "users", req.fromUserId));
+          if (!fromDoc.exists()) continue;
+          const fromData = fromDoc.data();
+
+          const item = document.createElement('div');
+          item.className = "bg-[#080d1a] border border-slate-800 rounded-xl p-3 flex items-center justify-between";
+          
+          let avatarHtml = fromData.avatar 
+            ? `<div class="w-10 h-10 rounded-full bg-blue-600 bg-cover bg-center shrink-0 border border-blue-400/30" style="background-image: url(${fromData.avatar})"></div>`
+            : `<div class="w-10 h-10 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-sm shrink-0 border border-blue-400/30">${(fromData.displayName || fromData.username || 'U').charAt(0).toUpperCase()}</div>`;
+
+          item.innerHTML = `
+            <div class="flex items-center gap-3 min-w-0">
+              ${avatarHtml}
+              <div class="flex flex-col min-w-0">
+                <span class="font-bold text-white text-sm truncate">${fromData.displayName || fromData.username}</span>
+                <span class="text-xs text-slate-400 truncate">@${fromData.username}</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <button type="button" onclick="acceptFriendRequest('${req.id}', '${req.fromUserId}')" class="p-2 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 transition-colors" title="Aceitar">
+                <i data-lucide="check" class="w-4 h-4"></i>
+              </button>
+              <button type="button" onclick="rejectFriendRequest('${req.id}')" class="p-2 rounded-lg bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/30 transition-colors" title="Recusar">
+                <i data-lucide="x" class="w-4 h-4"></i>
+              </button>
+            </div>
+          `;
+          container.appendChild(item);
+        } catch (e) {
+          console.error("Erro ao renderizar solicitação:", e);
+        }
+      }
+      lucide.createIcons();
+    }
+
+    window.sendFriendRequest = async function() {
+      const input = document.getElementById('add-friend-username-input');
+      const targetUsername = input.value.trim().toLowerCase();
+      if (!targetUsername) return;
+
+      const user = auth.currentUser;
+      if (!user) return;
+
+      if (targetUsername === currentUserData?.username) {
+        showToast('Você não pode adicionar a si mesmo.', false);
+        return;
+      }
+
+      try {
+        const q = query(collection(db, "users"), where("username", "==", targetUsername));
+        const querySnap = await getDocs(q);
+
+        if (querySnap.empty) {
+          showToast('Usuário não encontrado com este nome exato.', false);
+          return;
+        }
+
+        let targetUserId = null;
+        querySnap.forEach(docSnap => {
+          targetUserId = docSnap.id;
+        });
+
+        if (currentUserData.friends && currentUserData.friends.includes(targetUserId)) {
+          showToast('Vocês já são amigos!', false);
+          return;
+        }
+
+        const qCheck = query(
+          collection(db, "friendRequests"),
+          where("fromUserId", "==", user.uid),
+          where("toUserId", "==", targetUserId),
+          where("status", "==", "pending")
+        );
+        const checkSnap = await getDocs(qCheck);
+        if (!checkSnap.empty) {
+          showToast('Você já enviou uma solicitação para este usuário.', false);
+          return;
+        }
+
+        await addDoc(collection(db, "friendRequests"), {
+          fromUserId: user.uid,
+          toUserId: targetUserId,
+          status: "pending",
+          createdAt: serverTimestamp()
+        });
+
+        input.value = '';
+        showToast('Solicitação de amizade enviada com sucesso!');
+        switchFriendsTab('list');
+      } catch (err) {
+        console.error("Erro ao enviar solicitação:", err);
+        showToast('Erro ao enviar solicitação de amizade.', false);
+      }
+    }
+
+    window.acceptFriendRequest = async function(requestId, fromUserId) {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      try {
+        await updateDoc(doc(db, "friendRequests", requestId), { status: "accepted" });
+
+        const myUserRef = doc(db, "users", user.uid);
+        const targetUserRef = doc(db, "users", fromUserId);
+
+        await updateDoc(myUserRef, { friends: arrayUnion(fromUserId) });
+        await updateDoc(targetUserRef, { friends: arrayUnion(user.uid) });
+
+        showToast('Solicitação aceita! Amigo adicionado.');
+      } catch (err) {
+        console.error("Erro ao aceitar solicitação:", err);
+        showToast('Erro ao aceitar solicitação.', false);
+      }
+    }
+
+    window.rejectFriendRequest = async function(requestId) {
+      try {
+        await updateDoc(doc(db, "friendRequests", requestId), { status: "rejected" });
+        showToast('Solicitação recusada.');
+      } catch (err) {
+        console.error("Erro ao recusar solicitação:", err);
+        showToast('Erro ao recusar solicitação.', false);
+      }
+    }
+
+    window.removeFriend = async function(friendId) {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      try {
+        const myDocRef = doc(db, "users", user.uid);
+        const friendDocRef = doc(db, "users", friendId);
+
+        const mySnap = await getDoc(myDocRef);
+        const friendSnap = await getDoc(friendDocRef);
+
+        if (mySnap.exists()) {
+          const myFriends = mySnap.data().friends || [];
+          const updatedMyFriends = myFriends.filter(id => id !== friendId);
+          await updateDoc(myDocRef, { friends: updatedMyFriends });
+        }
+
+        if (friendSnap.exists()) {
+          const fFriends = friendSnap.data().friends || [];
+          const updatedFFriends = fFriends.filter(id => id !== user.uid);
+          await updateDoc(friendDocRef, { friends: updatedFFriends });
+        }
+
+        showToast('Amigo removido com sucesso.');
+      } catch (err) {
+        console.error("Erro ao remover amigo:", err);
+        showToast('Erro ao remover amigo.', false);
+      }
+    }
+
+    // SERVIDORES
+    async function loadUserServers(userId) {
+      try {
+        const q = query(collection(db, "servers"), where("members", "array-contains", userId));
+        const querySnapshot = await getDocs(q);
+        userServers = [];
+        const container = document.getElementById('servers-list-container');
+        container.innerHTML = '';
+
+        let countCreated = 0;
+        querySnapshot.forEach((docSnap) => {
+          const sData = { id: docSnap.id, ...docSnap.data() };
+          userServers.push(sData);
+          renderServerIconInSidebar(sData);
+          if (sData.ownerId === userId) {
+            countCreated++;
+          }
+        });
+
+        userServersCount = countCreated;
+      } catch (err) {
+        console.error("Erro ao carregar servidores:", err);
+      }
+    }
+
+    window.handleCreateServerSubmit = async function(event) {
+      event.preventDefault();
+
+      if (userServersCount >= 5) {
+        closeCreateServerModal();
+        showToast('Você atingiu o limite máximo de 5 servidores.', false);
+        return;
+      }
+
+      const serverNameInput = document.getElementById('server-name-input');
+      const serverName = serverNameInput.value.trim();
+      if (!serverName) return;
+
+      const user = auth.currentUser;
+      if (!user) {
+        showToast('Erro de autenticação. Faça login novamente.', false);
+        return;
+      }
+
+      const btn = document.getElementById('btn-create-server');
+      const btnText = document.getElementById('create-server-btn-text');
+      const spinner = document.getElementById('create-server-spinner');
+
+      btn.disabled = true;
+      btnText.textContent = "Criando...";
+      spinner.classList.remove('hidden');
+
+      try {
+        const newServerData = {
+          name: serverName,
+          icon: selectedServerImage || null,
+          banner: null,
+          nicknames: {},
+          roles: {
+            [user.uid]: { role: 'Dono', color: '#3b82f6' }
+          },
+          bannedUsers: [],
+          ownerId: user.uid,
+          members: [user.uid],
+          createdAt: serverTimestamp()
+        };
+
+        const docRef = await addDoc(collection(db, "servers"), newServerData);
+        const createdServer = { id: docRef.id, ...newServerData };
+
+        userServers.push(createdServer);
+        userServersCount++;
+
+        renderServerIconInSidebar(createdServer);
+        closeCreateServerModal();
+        switchToServerView(createdServer);
+        showToast(`Servidor "${serverName}" criado com sucesso! (${userServersCount}/5)`);
+      } catch (error) {
+        console.error("Erro detalhado ao criar servidor:", error);
+        showToast('Erro ao criar servidor no banco de dados.', false);
+      } finally {
+        btn.disabled = false;
+        btnText.textContent = "Criar";
+        spinner.classList.add('hidden');
+      }
+    }
+
+    window.handleJoinServerSubmit = async function(event) {
+      event.preventDefault();
+      let inviteCode = document.getElementById('server-invite-code').value.trim();
+      if (!inviteCode) return;
+
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const btn = document.getElementById('btn-join-server');
+      const btnText = document.getElementById('join-server-btn-text');
+      const spinner = document.getElementById('join-server-spinner');
+
+      btn.disabled = true;
+      btnText.textContent = "Entrando...";
+      spinner.classList.remove('hidden');
+
+      try {
+        const inviteRef = doc(db, "invites", inviteCode);
+        const inviteSnap = await getDoc(inviteRef);
+
+        if (!inviteSnap.exists()) {
+          showToast('Código de convite inválido ou não encontrado.', false);
+          return;
+        }
+
+        const invData = inviteSnap.data();
+
+        if (invData.expiresAt && invData.expiresAt.toDate() < new Date()) {
+          showToast('Este convite expirou.', false);
+          return;
+        }
+
+        if (invData.maxUses > 0 && invData.uses >= invData.maxUses) {
+          showToast('Este convite atingiu o limite máximo de usos.', false);
+          return;
+        }
+
+        const targetServerId = invData.serverId;
+        const serverRef = doc(db, "servers", targetServerId);
+        const serverSnap = await getDoc(serverRef);
+
+        if (!serverSnap.exists()) {
+          showToast('O servidor associado a este convite não existe mais.', false);
+          return;
+        }
+
+        const serverData = { id: serverSnap.id, ...serverSnap.data() };
+
+        // Verificar se usuário está banido
+        const bannedList = serverData.bannedUsers || [];
+        if (bannedList.some(b => b.uid === user.uid)) {
+          showToast('Você está banido deste servidor.', false);
+          return;
+        }
+
+        await updateDoc(inviteRef, { uses: (invData.uses || 0) + 1 });
+
+        const serverRoles = serverData.roles || {};
+        if (!serverRoles[user.uid]) {
+          serverRoles[user.uid] = { role: 'Membro', color: '#94a3b8' };
+        }
+
+        await updateDoc(serverRef, {
+          members: arrayUnion(user.uid),
+          roles: serverRoles
+        });
+
+        if (!userServers.some(s => s.id === serverData.id)) {
+          userServers.push(serverData);
+          renderServerIconInSidebar(serverData);
+        }
+
+        closeJoinServerModal();
+        switchToServerView(serverData);
+        showToast(`Você entrou no servidor ${serverData.name}!`);
+      } catch (err) {
+        console.error("Erro ao entrar no servidor:", err);
+        showToast('Não foi possível entrar no servidor.', false);
+      } finally {
+        btn.disabled = false;
+        btnText.textContent = "Entrar";
+        spinner.classList.add('hidden');
+      }
+    }
+
+    function renderServerIconInSidebar(server) {
+      const container = document.getElementById('servers-list-container');
+
+      const existingWrapper = document.getElementById(`server-item-${server.id}`);
+      if (existingWrapper) {
+        const iconBtn = existingWrapper.querySelector('button');
+        if (server.icon) {
+          iconBtn.style.backgroundImage = `url(${server.icon})`;
+          iconBtn.textContent = '';
+        } else {
+          iconBtn.style.backgroundImage = 'none';
+          iconBtn.textContent = server.name.charAt(0).toUpperCase();
+        }
+        iconBtn.title = server.name;
+        return;
+      }
+
+      const serverWrapper = document.createElement('div');
+      serverWrapper.className = "relative group flex items-center justify-center w-full";
+      serverWrapper.id = `server-item-${server.id}`;
+
+      const indicator = document.createElement('div');
+      indicator.className = "active-indicator absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-blue-500 rounded-r-full hidden";
+
+      const btn = document.createElement('button');
+      btn.className = "w-12 h-12 rounded-2xl bg-[#0f1624] hover:bg-blue-600/20 border border-slate-800 hover:border-blue-500/50 flex items-center justify-center text-blue-400 hover:rounded-xl transition-all group overflow-hidden bg-cover bg-center shrink-0 font-bold text-white text-base";
+      btn.title = server.name;
+
+      if (server.icon) {
+        btn.style.backgroundImage = `url(${server.icon})`;
+      } else {
+        btn.textContent = server.name.charAt(0).toUpperCase();
+      }
+
+      btn.onclick = () => switchToServerView(server);
+
+      serverWrapper.appendChild(indicator);
+      serverWrapper.appendChild(btn);
+      container.appendChild(serverWrapper);
+      lucide.createIcons();
+    }
+
+    window.switchToServerView = function(server) {
+      activeServerData = server;
+      document.getElementById('home-view').classList.add('hidden');
+      document.getElementById('server-view').classList.remove('hidden');
+      document.getElementById('server-view-title').textContent = server.name;
+
+      if (serverUnsubscribe) {
+        serverUnsubscribe();
+      }
+
+      const serverRef = doc(db, "servers", server.id);
+      serverUnsubscribe = onSnapshot(serverRef, async (docSnap) => {
+        if (docSnap.exists()) {
+          const updatedData = docSnap.data();
+          activeServerData = { id: docSnap.id, ...updatedData };
+          
+          const members = updatedData.members || [];
+          const countText = members.length === 1 ? '1 membro · 0 canais' : `${members.length} membros · 0 canais`;
+          document.getElementById('server-members-count-text').textContent = `${members.length} membros`;
+          
+          updateServerModalHeader();
+          await fetchServerMembersDetailed(members);
+        }
+      });
+
+      const headerBanner = document.getElementById('server-header-banner');
+      const headerIcon = document.getElementById('server-header-icon');
+
+      if (server.banner) {
+        headerBanner.style.backgroundImage = `url(${server.banner})`;
+      } else {
+        headerBanner.style.backgroundImage = 'none';
+      }
+
+      if (server.icon) {
+        headerIcon.style.backgroundImage = `url(${server.icon})`;
+        headerIcon.textContent = '';
+      } else {
+        headerIcon.style.backgroundImage = 'none';
+        headerIcon.textContent = server.name.charAt(0).toUpperCase();
+      }
+
+      document.getElementById('home-active-indicator').classList.add('hidden');
+      document.querySelectorAll('.active-indicator').forEach(el => el.classList.add('hidden'));
+
+      const currentIndicator = document.querySelector(`#server-item-${server.id} .active-indicator`);
+      if (currentIndicator) currentIndicator.classList.remove('hidden');
+    }
+
+    window.switchToHomeView = function() {
+      if (serverUnsubscribe) {
+        serverUnsubscribe();
+        serverUnsubscribe = null;
+      }
+      activeServerData = null;
+      document.getElementById('server-view').classList.add('hidden');
+      document.getElementById('home-view').classList.remove('hidden');
+
+      document.getElementById('home-active-indicator').classList.remove('hidden');
+      document.querySelectorAll('.active-indicator').forEach(el => el.classList.add('hidden'));
+    }
+
+    async function fetchServerMembersDetailed(memberUids) {
+      activeServerMembersDetailed = [];
+      for (const uid of memberUids) {
+        try {
+          const uSnap = await getDoc(doc(db, "users", uid));
+          if (uSnap.exists()) {
+            activeServerMembersDetailed.push({ uid, ...uSnap.data() });
+          } else {
+            activeServerMembersDetailed.push({ uid, username: 'Desconhecido', displayName: 'Usuário' });
+          }
+        } catch (e) {
+          activeServerMembersDetailed.push({ uid, username: 'Erro', displayName: 'Usuário' });
+        }
+      }
+    }
+
+    function updateServerModalHeader() {
+      if (!activeServerData) return;
+      const titleEl = document.getElementById('modal-server-header-title');
+      const subEl = document.getElementById('modal-server-header-sub');
+      const iconEl = document.getElementById('modal-server-header-icon');
+
+      titleEl.textContent = activeServerData.name;
+      const memCount = (activeServerData.members || []).length;
+      subEl.textContent = `${memCount} membro${memCount === 1 ? '' : 's'} · 0 canais`;
+
+      if (activeServerData.icon) {
+        iconEl.style.backgroundImage = `url(${activeServerData.icon})`;
+        iconEl.textContent = '';
+      } else {
+        iconEl.style.backgroundImage = 'none';
+        iconEl.textContent = activeServerData.name.charAt(0).toUpperCase();
+      }
+    }
+
+    // SERVER SETTINGS MODAL TABS
+    window.openServerSettingsModal = function() {
+      if (!activeServerData) return;
+
+      updateServerModalHeader();
+
+      const modal = document.getElementById('server-settings-modal');
+      const nameInput = document.getElementById('edit-servername-input');
+      const nicknameInput = document.getElementById('edit-server-nickname-input');
+      const bannerPreview = document.getElementById('edit-server-banner-preview');
+      const iconPreview = document.getElementById('edit-server-icon-preview');
+      const placeholderText = document.getElementById('server-banner-placeholder-text');
+
+      nameInput.value = activeServerData.name || '';
+      
+      const userId = auth.currentUser?.uid;
+      const userNick = (activeServerData.nicknames && userId) ? activeServerData.nicknames[userId] || '' : '';
+      nicknameInput.value = userNick;
+
+      tempServerIcon = activeServerData.icon || null;
+      tempServerBanner = activeServerData.banner || null;
+
+      if (tempServerBanner) {
+        bannerPreview.style.backgroundImage = `url(${tempServerBanner})`;
+        placeholderText.classList.add('hidden');
+      } else {
+        bannerPreview.style.backgroundImage = 'none';
+        placeholderText.classList.remove('hidden');
+      }
+
+      if (tempServerIcon) {
+        iconPreview.style.backgroundImage = `url(${tempServerIcon})`;
+        iconPreview.textContent = '';
+      } else {
+        iconPreview.style.backgroundImage = 'none';
+        iconPreview.textContent = (activeServerData.name || 'S').charAt(0).toUpperCase();
+      }
+
+      // Configurar botão de segurança
+      const isOwner = activeServerData.ownerId === auth.currentUser?.uid;
+      const secTitle = document.getElementById('security-action-title');
+      const secDesc = document.getElementById('security-action-desc');
+      const secBtnText = document.getElementById('btn-security-action-text');
+      
+      if (isOwner) {
+        secTitle.textContent = "Excluir servidor";
+        secDesc.textContent = "Apaga permanentemente canais, mensagens e convites. Essa ação não pode ser desfeita.";
+        secBtnText.textContent = "Excluir servidor";
+      } else {
+        secTitle.textContent = "Sair do servidor";
+        secDesc.textContent = "Você deixará de ser membro deste servidor e precisará de um novo convite para retornar.";
+        secBtnText.textContent = "Sair do servidor";
+      }
+
+      switchServerSettingsTab('general');
+      modal.classList.remove('hidden');
+      setTimeout(() => modal.classList.remove('opacity-0'), 10);
+    }
+
+    window.closeServerSettingsModal = function() {
+      const modal = document.getElementById('server-settings-modal');
+      modal.classList.add('opacity-0');
+      setTimeout(() => modal.classList.add('hidden'), 200);
+    }
+
+    window.switchServerSettingsTab = function(tab) {
+      const tabs = ['general', 'invites', 'admin', 'bans', 'security'];
+      tabs.forEach(t => {
+        const el = document.getElementById(`server-tab-${t}`);
+        const btn = document.getElementById(`server-tab-btn-${t}`);
+        if (el) el.classList.add('hidden');
+        if (btn) {
+          btn.className = "px-3 py-2 font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all whitespace-nowrap";
+        }
+      });
+
+      const activeEl = document.getElementById(`server-tab-${tab}`);
+      const activeBtn = document.getElementById(`server-tab-btn-${tab}`);
+      if (activeEl) activeEl.classList.remove('hidden');
+      if (activeBtn) {
+        activeBtn.className = "px-3 py-2 font-bold text-blue-400 bg-[#162035] rounded-lg transition-all whitespace-nowrap";
+      }
+
+      if (tab === 'invites') loadServerInvites();
+      if (tab === 'admin') loadAdminMembersList();
+      if (tab === 'bans') {
+        loadBannedUsersList();
+        renderMembersToBanList('');
+      }
+    }
+
+    // --- ABA ADMINISTRAÇÃO: CARGOS E CORES ---
+    async function loadAdminMembersList() {
+      const container = document.getElementById('admin-members-list');
+      if (!activeServerData) return;
+      container.innerHTML = `<div class="text-center py-6 text-slate-500 text-xs">Carregando membros...</div>`;
+
+      if (activeServerMembersDetailed.length === 0) {
+        await fetchServerMembersDetailed(activeServerData.members || []);
+      }
+
+      container.innerHTML = '';
+      const serverRoles = activeServerData.roles || {};
+      const currentUserId = auth.currentUser?.uid;
+      const isOwner = activeServerData.ownerId === currentUserId;
+
+      activeServerMembersDetailed.forEach(member => {
+        const memberRoleData = serverRoles[member.uid] || { role: (member.uid === activeServerData.ownerId ? 'Dono' : 'Membro'), color: (member.uid === activeServerData.ownerId ? '#3b82f6' : '#94a3b8') };
+        const isSelf = member.uid === currentUserId;
+        const isTargetOwner = member.uid === activeServerData.ownerId;
+
+        const card = document.createElement('div');
+        card.className = "bg-[#080d1a] border border-slate-800/80 rounded-xl p-3 flex items-center justify-between gap-3";
+
+        let avatarHtml = member.avatar 
+          ? `<div class="w-10 h-10 rounded-full bg-cover bg-center shrink-0 border border-slate-700" style="background-image: url(${member.avatar})"></div>`
+          : `<div class="w-10 h-10 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-sm shrink-0">${(member.displayName || member.username || 'U').charAt(0).toUpperCase()}</div>`;
+
+        card.innerHTML = `
+          <div class="flex items-center gap-3 min-w-0 flex-1">
+            ${avatarHtml}
+            <div class="flex flex-col min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-white text-xs truncate">${member.displayName || member.username}</span>
+                ${isTargetOwner ? `<span class="px-1.5 py-0.5 rounded bg-blue-600/30 text-blue-400 text-[9px] font-bold uppercase">Dono</span>` : ''}
+              </div>
+              <span class="text-[11px] text-slate-400 truncate">@${member.username}</span>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 shrink-0">
+            <!-- SELETOR DE COR -->
+            <div class="flex items-center gap-1.5 bg-[#0c1220] px-2 py-1 rounded-lg border border-slate-800">
+              <input type="color" value="${memberRoleData.color || '#3b82f6'}" ${(!isOwner && !isSelf) ? 'disabled' : ''} onchange="updateMemberRoleColor('${member.uid}', this.value)" class="w-5 h-5 rounded cursor-pointer bg-transparent border-0 outline-none" title="Cor de destaque">
+            </div>
+
+            <!-- SELETOR DE CARGO -->
+            <select ${(!isOwner || isTargetOwner) ? 'disabled' : ''} onchange="updateMemberRoleTitle('${member.uid}', this.value)" class="bg-[#0c1220] border border-slate-700 text-slate-200 text-xs rounded-lg px-2.5 py-1.5 outline-none font-medium">
+              <option value="Dono" ${memberRoleData.role === 'Dono' ? 'selected' : ''} disabled>Dono</option>
+              <option value="Administrador" ${memberRoleData.role === 'Administrador' ? 'selected' : ''}>Administrador</option>
+              <option value="Moderador" ${memberRoleData.role === 'Moderador' ? 'selected' : ''}>Moderador</option>
+              <option value="Membro" ${memberRoleData.role === 'Membro' ? 'selected' : ''}>Membro</option>
+            </select>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    window.updateMemberRoleTitle = async function(memberUid, newRole) {
+      if (!activeServerData) return;
+      try {
+        const serverRef = doc(db, "servers", activeServerData.id);
+        const roles = activeServerData.roles || {};
+        roles[memberUid] = {
+          ...(roles[memberUid] || {}),
+          role: newRole,
+          color: roles[memberUid]?.color || '#3b82f6'
+        };
+        await updateDoc(serverRef, { roles });
+        showToast(`Cargo atualizado para "${newRole}"!`);
+      } catch (err) {
+        showToast('Erro ao atualizar cargo.', false);
+      }
+    }
+
+    window.updateMemberRoleColor = async function(memberUid, newColor) {
+      if (!activeServerData) return;
+      try {
+        const serverRef = doc(db, "servers", activeServerData.id);
+        const roles = activeServerData.roles || {};
+        roles[memberUid] = {
+          ...(roles[memberUid] || {}),
+          role: roles[memberUid]?.role || 'Membro',
+          color: newColor
+        };
+        await updateDoc(serverRef, { roles });
+        showToast('Cor do membro atualizada!');
+      } catch (err) {
+        showToast('Erro ao atualizar cor.', false);
+      }
+    }
+
+    // --- ABA BANIMENTOS: PESQUISA E BANIR/DESBANIR ---
+    window.handleFilterMembersToBan = function(queryStr) {
+      renderMembersToBanList(queryStr.trim().toLowerCase());
+    }
+
+    function renderMembersToBanList(queryStr) {
+      const container = document.getElementById('search-members-ban-results');
+      if (!activeServerData) return;
+
+      const currentUserId = auth.currentUser?.uid;
+      const isOwner = activeServerData.ownerId === currentUserId;
+
+      if (!queryStr) {
+        container.innerHTML = '';
+        return;
+      }
+
+      const filtered = activeServerMembersDetailed.filter(m => {
+        if (m.uid === currentUserId || m.uid === activeServerData.ownerId) return false;
+        return (m.displayName || '').toLowerCase().includes(queryStr) || (m.username || '').toLowerCase().includes(queryStr);
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="text-center py-2 text-slate-500 text-xs">Nenhum membro encontrado.</div>`;
+        return;
+      }
+
+      container.innerHTML = '';
+      filtered.forEach(m => {
+        const item = document.createElement('div');
+        item.className = "flex items-center justify-between p-2.5 bg-[#0c1220] border border-slate-800 rounded-xl";
+        item.innerHTML = `
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-7 h-7 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-xs shrink-0">${(m.displayName || m.username || 'U').charAt(0).toUpperCase()}</div>
+            <div class="flex flex-col min-w-0">
+              <span class="text-xs font-bold text-white truncate">${m.displayName || m.username}</span>
+              <span class="text-[10px] text-slate-400 truncate">@${m.username}</span>
+            </div>
+          </div>
+          <button type="button" onclick="promptBanUser('${m.uid}', '${m.displayName || m.username}')" class="px-3 py-1.5 rounded-lg bg-rose-600/20 hover:bg-rose-600/40 text-rose-400 border border-rose-500/30 text-xs font-bold transition-colors">
+            Banir
+          </button>
+        `;
+        container.appendChild(item);
+      });
+      lucide.createIcons();
+    }
+
+    window.promptBanUser = async function(targetUid, targetName) {
+      if (!activeServerData) return;
+      const reason = prompt(`Motivo do banimento de "${targetName}":`, "Violação das regras do servidor");
+      if (reason === null) return;
+
+      const user = auth.currentUser;
+      try {
+        const serverRef = doc(db, "servers", activeServerData.id);
+        const banEntry = {
+          uid: targetUid,
+          name: targetName,
+          reason: reason || "Nenhum motivo informado",
+          bannedBy: currentUserData?.displayName || currentUserData?.username || "Admin",
+          bannedAt: new Date().toLocaleDateString('pt-BR')
+        };
+
+        await updateDoc(serverRef, {
+          members: arrayRemove(targetUid),
+          bannedUsers: arrayUnion(banEntry)
+        });
+
+        showToast(`${targetName} foi banido do servidor.`);
+        document.getElementById('search-member-ban-input').value = '';
+        renderMembersToBanList('');
+        loadBannedUsersList();
+      } catch (err) {
+        console.error(err);
+        showToast('Erro ao banir usuário.', false);
+      }
+    }
+
+    function loadBannedUsersList() {
+      const container = document.getElementById('banned-users-list-container');
+      if (!activeServerData) return;
+
+      const banned = activeServerData.bannedUsers || [];
+      if (banned.length === 0) {
+        container.innerHTML = `
+          <div class="p-6 text-center text-slate-500 text-xs border border-dashed border-slate-800/80 rounded-xl">
+            <span class="font-semibold text-slate-400 block mb-1">Nenhum usuário banido</span>
+            <span class="text-[11px]">Os banimentos ativos aparecerão aqui.</span>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = '';
+      banned.forEach(b => {
+        const item = document.createElement('div');
+        item.className = "bg-[#0c1220] border border-slate-800 rounded-xl p-3 flex items-center justify-between gap-3";
+        item.innerHTML = `
+          <div class="flex flex-col min-w-0 gap-0.5">
+            <span class="font-bold text-white text-xs truncate">${b.name || 'Usuário'}</span>
+            <span class="text-[11px] text-slate-400 truncate">Motivo: <span class="text-slate-300">${b.reason}</span></span>
+            <span class="text-[10px] text-slate-500">Banido por ${b.bannedBy} em ${b.bannedAt}</span>
+          </div>
+          <button type="button" onclick="unbanUser('${b.uid}')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition-colors shrink-0">
+            Desbanir
+          </button>
+        `;
+        container.appendChild(item);
+      });
+      lucide.createIcons();
+    }
+
+    window.unbanUser = async function(targetUid) {
+      if (!activeServerData) return;
+      try {
+        const serverRef = doc(db, "servers", activeServerData.id);
+        const banned = activeServerData.bannedUsers || [];
+        const targetEntry = banned.find(b => b.uid === targetUid);
+        if (!targetEntry) return;
+
+        await updateDoc(serverRef, {
+          bannedUsers: arrayRemove(targetEntry)
+        });
+
+        showToast('Usuário desbanido com sucesso!');
+        loadBannedUsersList();
+      } catch (err) {
+        showToast('Erro ao desbanir usuário.', false);
+      }
+    }
+
+    // --- ABA SEGURANÇA: EXCLUIR / SAIR DO SERVIDOR ---
+    window.handleSecurityServerAction = async function() {
+      if (!activeServerData) return;
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const isOwner = activeServerData.ownerId === user.uid;
+
+      if (isOwner) {
+        const confirmDelete = confirm(`ATENÇÃO: Tem certeza de que deseja EXCLUIR permanentemente o servidor "${activeServerData.name}"? Todas as mensagens e configurações serão apagadas.`);
+        if (!confirmDelete) return;
+
+        try {
+          // Deletar convites vinculados
+          const qInvites = query(collection(db, "invites"), where("serverId", "==", activeServerData.id));
+          const invSnap = await getDocs(qInvites);
+          invSnap.forEach(async (d) => {
+            await deleteDoc(doc(db, "invites", d.id));
+          });
+
+          // Deletar o servidor
+          await deleteDoc(doc(db, "servers", activeServerData.id));
+
+          // Remover da barra lateral
+          const el = document.getElementById(`server-item-${activeServerData.id}`);
+          if (el) el.remove();
+
+          userServers = userServers.filter(s => s.id !== activeServerData.id);
+          userServersCount = Math.max(0, userServersCount - 1);
+
+          closeServerSettingsModal();
+          switchToHomeView();
+          showToast(`Servidor "${activeServerData.name}" excluído com sucesso.`);
+        } catch (err) {
+          console.error(err);
+          showToast('Erro ao excluir servidor.', false);
+        }
+      } else {
+        const confirmLeave = confirm(`Deseja realmente sair do servidor "${activeServerData.name}"?`);
+        if (!confirmLeave) return;
+
+        try {
+          const serverRef = doc(db, "servers", activeServerData.id);
+          await updateDoc(serverRef, {
+            members: arrayRemove(user.uid)
+          });
+
+          const el = document.getElementById(`server-item-${activeServerData.id}`);
+          if (el) el.remove();
+
+          userServers = userServers.filter(s => s.id !== activeServerData.id);
+          closeServerSettingsModal();
+          switchToHomeView();
+          showToast(`Você saiu do servidor "${activeServerData.name}".`);
+        } catch (err) {
+          showToast('Erro ao sair do servidor.', false);
+        }
+      }
+    }
+
+    // CONVITES
+    async function loadServerInvites() {
+      if (!activeServerData) return;
+      const container = document.getElementById('invites-list-container');
+      container.innerHTML = `<div class="text-center py-6 text-slate-500 text-xs">Carregando convites...</div>`;
+
+      try {
+        const q = query(collection(db, "invites"), where("serverId", "==", activeServerData.id));
+        const snap = await getDocs(q);
+
+        if (snap.empty) {
+          container.innerHTML = `<div class="text-center py-6 text-slate-500 text-xs border border-dashed border-slate-800 rounded-xl">Nenhum convite criado para este servidor.</div>`;
+          return;
+        }
+
+        container.innerHTML = '';
+        snap.forEach(docSnap => {
+          const inv = docSnap.data();
+          const code = docSnap.id;
+
+          const item = document.createElement('div');
+          item.className = "bg-[#080d1a] border border-slate-800 rounded-xl p-3 flex items-center justify-between";
+          
+          let usesInfo = inv.maxUses > 0 ? `${inv.uses}/${inv.maxUses} usos` : `${inv.uses} usos`;
+          let expInfo = "Nunca expira";
+          if (inv.expiresAt) {
+            const expDate = inv.expiresAt.toDate();
+            expInfo = expDate < new Date() ? "Expirado" : `Expira ${expDate.toLocaleDateString()}`;
+          }
+
+          item.innerHTML = `
+            <div class="flex flex-col gap-0.5">
+              <span class="font-mono text-xs text-blue-400 font-bold flex items-center gap-1.5">
+                ${code}
+                <button type="button" onclick="copyInviteCode('${code}')" class="text-slate-500 hover:text-white transition-colors" title="Copiar código">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                </button>
+              </span>
+              <span class="text-[10px] text-slate-500">${usesInfo} • ${expInfo}</span>
+            </div>
+            <button type="button" onclick="deleteInviteCode('${code}')" class="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors" title="Excluir convite">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          `;
+
+          container.appendChild(item);
+        });
+
+        lucide.createIcons();
+      } catch (err) {
+        console.error("Erro ao carregar convites:", err);
+        container.innerHTML = `<div class="text-center py-4 text-rose-400 text-xs">Erro ao carregar convites.</div>`;
+      }
+    }
+
+    window.handleGenerateNewInvite = async function() {
+      if (!activeServerData) return;
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const expireVal = document.getElementById('invite-expire-select').value;
+      const maxUsesVal = parseInt(document.getElementById('invite-uses-select').value);
+
+      let expiresAt = null;
+      if (expireVal === '1d') {
+        expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+      } else if (expireVal === '7d') {
+        expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+      }
+
+      const randomSuffix = Math.random().toString(36).substring(2, 11) + Math.random().toString(36).substring(2, 6);
+      const inviteCode = `vaibcod${randomSuffix}`;
+
+      try {
+        await setDoc(doc(db, "invites", inviteCode), {
+          serverId: activeServerData.id,
+          creatorId: user.uid,
+          uses: 0,
+          maxUses: maxUsesVal,
+          expiresAt: expiresAt,
+          createdAt: serverTimestamp()
+        });
+
+        showToast(`Convite ${inviteCode} criado!`);
+        loadServerInvites();
+      } catch (err) {
+        console.error("Erro ao gerar convite:", err);
+        showToast('Erro ao criar convite.', false);
+      }
+    }
+
+    window.copyInviteCode = function(code) {
+      navigator.clipboard.writeText(code);
+      showToast('Código copiado para a área de transferência!');
+    }
+
+    window.deleteInviteCode = async function(code) {
+      try {
+        await deleteDoc(doc(db, "invites", code));
+        showToast('Convite excluído!');
+        loadServerInvites();
+      } catch (err) {
+        console.error("Erro ao deletar convite:", err);
+        showToast('Erro ao excluir convite.', false);
+      }
+    }
+
+    window.previewServerImageUpload = function(event, type) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          cropType = type === 'icon' ? 'server-icon' : 'server-banner';
+          openCropModal(cropType, e.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
+      event.target.value = "";
+    }
+
+    window.handleSaveServerSettings = async function(event) {
+      event.preventDefault();
+      if (!activeServerData) return;
+
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const newServerName = document.getElementById('edit-servername-input').value.trim();
+      const newNickname = document.getElementById('edit-server-nickname-input').value.trim();
+
+      const btn = document.getElementById('btn-save-server-settings');
+      const text = document.getElementById('save-server-settings-text');
+      const spinner = document.getElementById('save-server-settings-spinner');
+
+      btn.disabled = true;
+      text.textContent = "Salvando...";
+      spinner.classList.remove('hidden');
+
+      try {
+        const serverRef = doc(db, "servers", activeServerData.id);
+        const updatedNicknames = activeServerData.nicknames || {};
+        if (newNickname) {
+          updatedNicknames[user.uid] = newNickname;
+        } else {
+          delete updatedNicknames[user.uid];
+        }
+
+        const updatePayload = {
+          name: newServerName,
+          icon: tempServerIcon,
+          banner: tempServerBanner,
+          nicknames: updatedNicknames
+        };
+
+        await updateDoc(serverRef, updatePayload);
+
+        activeServerData = { ...activeServerData, ...updatePayload };
+
+        const index = userServers.findIndex(s => s.id === activeServerData.id);
+        if (index !== -1) {
+          userServers[index] = activeServerData;
+        }
+
+        renderServerIconInSidebar(activeServerData);
+        switchToServerView(activeServerData);
+
+        showToast('Configurações do servidor salvas!');
+        closeServerSettingsModal();
+      } catch (err) {
+        console.error("Erro ao salvar configurações do servidor:", err);
+        showToast('Erro ao atualizar servidor.', false);
+      } finally {
+        btn.disabled = false;
+        text.textContent = "Salvar alterações";
+        spinner.classList.add('hidden');
+      }
+    }
+
+    window.toggleUserProfileMenu = function(event) {
+      event.stopPropagation();
+      const menu = document.getElementById('user-profile-menu');
+      if (menu.classList.contains('hidden')) {
+        menu.classList.remove('hidden');
+        setTimeout(() => {
+          menu.classList.remove('opacity-0', 'translate-y-2');
+        }, 10);
+      } else {
+        menu.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => menu.classList.add('hidden'), 200);
+      }
+    }
+
+    window.setUserStatus = function(status) {
+      const footerDot = document.getElementById('footer-status-dot');
+      const popoverDot = document.getElementById('popover-status-dot');
+
+      const checkOnline = document.getElementById('status-check-online');
+      const checkDnd = document.getElementById('status-check-dnd');
+      const checkOffline = document.getElementById('status-check-offline');
+
+      checkOnline.classList.add('hidden');
+      checkDnd.classList.add('hidden');
+      checkOffline.classList.add('hidden');
+
+      if (status === 'online') {
+        footerDot.className = "absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-[#070a12] rounded-full";
+        popoverDot.className = "absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-[#0c1220] rounded-full";
+        checkOnline.classList.remove('hidden');
+        showToast('Status alterado para Online');
+      } else if (status === 'dnd') {
+        footerDot.className = "absolute bottom-0 right-0 w-2.5 h-2.5 bg-rose-500 border-2 border-[#070a12] rounded-full";
+        popoverDot.className = "absolute bottom-0 right-0 w-3 h-3 bg-rose-500 border-2 border-[#0c1220] rounded-full";
+        checkDnd.classList.remove('hidden');
+        showToast('Status alterado para Não perturbe');
+      } else if (status === 'offline') {
+        footerDot.className = "absolute bottom-0 right-0 w-2.5 h-2.5 bg-slate-500 border-2 border-[#070a12] rounded-full";
+        popoverDot.className = "absolute bottom-0 right-0 w-3 h-3 bg-slate-500 border-2 border-[#0c1220] rounded-full";
+        checkOffline.classList.remove('hidden');
+        showToast('Status alterado para Offline');
+      }
+    }
+
+    window.openEditProfileModal = function() {
+      const popover = document.getElementById('user-profile-menu');
+      popover.classList.add('opacity-0', 'translate-y-2');
+      setTimeout(() => popover.classList.add('hidden'), 200);
+
+      const modal = document.getElementById('edit-profile-modal');
+      const displayNameInput = document.getElementById('edit-displayname-input');
+      const usernameInput = document.getElementById('edit-username-input');
+      const bioInput = document.getElementById('edit-bio-input');
+      const bannerPreview = document.getElementById('edit-banner-preview');
+      const avatarPreview = document.getElementById('edit-avatar-preview');
+      const placeholderText = document.getElementById('banner-placeholder-text');
+
+      displayNameInput.value = currentUserData?.displayName || currentUserData?.username || '';
+      usernameInput.value = currentUserData?.username || '';
+      bioInput.value = currentUserData?.bio || '';
+      tempAvatar = currentUserData?.avatar || null;
+      tempBanner = currentUserData?.banner || null;
+
+      if (tempBanner) {
+        bannerPreview.style.backgroundImage = `url(${tempBanner})`;
+        placeholderText.classList.add('hidden');
+      } else {
+        bannerPreview.style.backgroundImage = 'none';
+        placeholderText.classList.remove('hidden');
+      }
+
+      if (tempAvatar) {
+        avatarPreview.style.backgroundImage = `url(${tempAvatar})`;
+        avatarPreview.textContent = '';
+      } else {
+        avatarPreview.style.backgroundImage = 'none';
+        avatarPreview.textContent = (currentUserData?.displayName || currentUserData?.username || 'M').charAt(0).toUpperCase();
+      }
+
+      isEditUsernameAvailable = true;
+      document.getElementById('edit-username-container').className = "input-dark rounded-xl flex items-center px-3.5 py-3";
+      document.getElementById('edit-username-status-icon').innerHTML = "";
+
+      modal.classList.remove('hidden');
+      setTimeout(() => modal.classList.remove('opacity-0'), 10);
+    }
+
+    window.closeEditProfileModal = function() {
+      const modal = document.getElementById('edit-profile-modal');
+      modal.classList.add('opacity-0');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 200);
+    }
+
+    window.previewEditImage = function(event, type) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          cropType = type;
+          openCropModal(type, e.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
+      event.target.value = "";
+    }
+
+    function openCropModal(type, src) {
+      const modal = document.getElementById('image-crop-modal');
+      const img = document.getElementById('crop-target-image');
+      const mask = document.getElementById('crop-overlay-mask');
+      const title = document.getElementById('crop-title-text');
+      const slider = document.getElementById('crop-zoom-slider');
+
+      let targetW = 200;
+      let targetH = 200;
+
+      if (type === 'avatar' || type === 'server-icon') {
+        title.textContent = type === 'avatar' ? "Editar Imagem de Perfil" : "Editar Ícone do Servidor";
+        mask.className = "crop-viewport-circle";
+        targetW = 200;
+        targetH = 200;
+      } else if (type === 'banner') {
+        title.textContent = "Editar Banner do Perfil";
+        mask.className = "crop-viewport-banner";
+        targetW = 300;
+        targetH = 112;
+      } else if (type === 'server-banner') {
+        title.textContent = "Editar Banner do Servidor";
+        mask.className = "crop-viewport-server-banner";
+        targetW = 320;
+        targetH = 140;
+      }
+
+      const tempImg = new Image();
+      tempImg.onload = function() {
+        imgNaturalWidth = tempImg.naturalWidth;
+        imgNaturalHeight = tempImg.naturalHeight;
+
+        const scaleX = targetW / imgNaturalWidth;
+        const scaleY = targetH / imgNaturalHeight;
+        minCropScale = Math.max(scaleX, scaleY);
+        
+        cropScale = minCropScale;
+        cropX = 0;
+        cropY = 0;
+
+        slider.min = minCropScale.toFixed(3);
+        slider.max = (minCropScale * 4).toFixed(3);
+        slider.value = cropScale;
+
+        img.src = src;
+        updateCropImageTransform();
+
+        modal.classList.remove('hidden');
+        setTimeout(() => modal.classList.remove('opacity-0'), 10);
+      };
+      tempImg.src = src;
+    }
+
+    window.closeCropModal = function() {
+      const modal = document.getElementById('image-crop-modal');
+      modal.classList.add('opacity-0');
+      setTimeout(() => modal.classList.add('hidden'), 200);
+    }
+
+    window.handleCropZoomChange = function(val) {
+      cropScale = parseFloat(val);
+      updateCropImageTransform();
+    }
+
+    function updateCropImageTransform() {
+      const img = document.getElementById('crop-target-image');
+      
+      const renderW = imgNaturalWidth * cropScale;
+      const renderH = imgNaturalHeight * cropScale;
+      
+      let targetW = 200;
+      let targetH = 200;
+
+      if (cropType === 'banner') {
+        targetW = 300;
+        targetH = 112;
+      } else if (cropType === 'server-banner') {
+        targetW = 320;
+        targetH = 140;
+      }
+
+      const maxX = Math.max(0, (renderW - targetW) / 2);
+      const maxY = Math.max(0, (renderH - targetH) / 2);
+
+      if (cropX > maxX) cropX = maxX;
+      if (cropX < -maxX) cropX = -maxX;
+      if (cropY > maxY) cropY = maxY;
+      if (cropY < -maxY) cropY = -maxY;
+
+      img.style.width = `${renderW}px`;
+      img.style.height = `${renderH}px`;
+      img.style.transform = `translate(${cropX}px, ${cropY}px)`;
+    }
+
+    function setupCropInteractions() {
+      const workspace = document.getElementById('crop-workspace');
+
+      const startDrag = (clientX, clientY) => {
+        isDragging = true;
+        dragStartX = clientX - cropX;
+        dragStartY = clientY - cropY;
+      };
+
+      const doDrag = (clientX, clientY) => {
+        if (!isDragging) return;
+        cropX = clientX - dragStartX;
+        cropY = clientY - dragStartY;
+        updateCropImageTransform();
+      };
+
+      const stopDrag = () => {
+        isDragging = false;
+      };
+
+      workspace.addEventListener('mousedown', (e) => startDrag(e.clientX, e.clientY));
+      window.addEventListener('mousemove', (e) => doDrag(e.clientX, e.clientY));
+      window.addEventListener('mouseup', stopDrag);
+
+      workspace.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) startDrag(e.touches[0].clientX, e.touches[0].clientY);
+      });
+      window.addEventListener('touchmove', (e) => {
+        if (isDragging && e.touches.length === 1) doDrag(e.touches[0].clientX, e.touches[0].clientY);
+      });
+      window.addEventListener('touchend', stopDrag);
+
+      workspace.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const slider = document.getElementById('crop-zoom-slider');
+        let newScale = cropScale + (e.deltaY < 0 ? 0.05 : -0.05);
+        newScale = Math.min(Math.max(newScale, minCropScale), minCropScale * 4);
+        cropScale = newScale;
+        slider.value = newScale;
+        updateCropImageTransform();
+      });
+    }
+
+    window.applyCroppedImage = function() {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = document.getElementById('crop-target-image');
+
+      let targetW = 250;
+      let targetH = 250;
+      let vpW = 200;
+      let vpH = 200;
+
+      if (cropType === 'banner') {
+        targetW = 600;
+        targetH = 225;
+        vpW = 300;
+        vpH = 112;
+      } else if (cropType === 'server-banner') {
+        targetW = 640;
+        targetH = 280;
+        vpW = 320;
+        vpH = 140;
+      }
+
+      canvas.width = targetW;
+      canvas.height = targetH;
+
+      ctx.fillStyle = '#060911';
+      ctx.fillRect(0, 0, targetW, targetH);
+
+      const renderW = imgNaturalWidth * cropScale;
+      const renderH = imgNaturalHeight * cropScale;
+
+      const imgLeftOnVP = (vpW - renderW) / 2 + cropX;
+      const imgTopOnVP = (vpH - renderH) / 2 + cropY;
+
+      const ratioX = targetW / vpW;
+      const ratioY = targetH / vpH;
+
+      const drawX = imgLeftOnVP * ratioX;
+      const drawY = imgTopOnVP * ratioY;
+      const drawW = renderW * ratioX;
+      const drawH = renderH * ratioY;
+
+      ctx.drawImage(img, drawX, drawY, drawW, drawH);
+
+      const croppedBase64 = canvas.toDataURL('image/jpeg', 0.88);
+
+      if (cropType === 'avatar') {
+        tempAvatar = croppedBase64;
+        const avatarPreview = document.getElementById('edit-avatar-preview');
+        avatarPreview.style.backgroundImage = `url(${tempAvatar})`;
+        avatarPreview.textContent = '';
+      } else if (cropType === 'banner') {
+        tempBanner = croppedBase64;
+        const bannerPreview = document.getElementById('edit-banner-preview');
+        const placeholderText = document.getElementById('banner-placeholder-text');
+        bannerPreview.style.backgroundImage = `url(${tempBanner})`;
+        placeholderText.classList.add('hidden');
+      } else if (cropType === 'server-icon') {
+        tempServerIcon = croppedBase64;
+        const iconPreview = document.getElementById('edit-server-icon-preview');
+        iconPreview.style.backgroundImage = `url(${tempServerIcon})`;
+        iconPreview.textContent = '';
+      } else if (cropType === 'server-banner') {
+        tempServerBanner = croppedBase64;
+        const bannerPreview = document.getElementById('edit-server-banner-preview');
+        const placeholderText = document.getElementById('server-banner-placeholder-text');
+        bannerPreview.style.backgroundImage = `url(${tempServerBanner})`;
+        placeholderText.classList.add('hidden');
+      }
+
+      closeCropModal();
+      showToast('Ajuste aplicado!');
+    }
+
+    window.handleEditUsernameInput = function(input) {
+      const lowerVal = input.value.toLowerCase();
+      if (input.value !== lowerVal) input.value = lowerVal;
+      
+      const container = document.getElementById('edit-username-container');
+      const iconContainer = document.getElementById('edit-username-status-icon');
+      const val = input.value.trim();
+      const pattern = /^[a-z0-9._]+$/;
+
+      if (checkEditUserTimeout) clearTimeout(checkEditUserTimeout);
+
+      if (val === currentUserData?.username) {
+        isEditUsernameAvailable = true;
+        container.className = "input-dark rounded-xl flex items-center px-3.5 py-3";
+        iconContainer.innerHTML = "";
+        return;
+      }
+
+      if (!val || !pattern.test(val) || val.length < 3) {
+        isEditUsernameAvailable = false;
+        container.className = "input-dark input-error rounded-xl flex items-center px-3.5 py-3";
+        iconContainer.innerHTML = `<i data-lucide="alert-circle" class="w-4 h-4 text-red-400"></i>`;
+        lucide.createIcons();
+        return;
+      }
+
+      container.className = "input-dark rounded-xl flex items-center px-3.5 py-3";
+      iconContainer.innerHTML = `<div class="w-4 h-4 border-2 border-blue-400/30 border-t-blue-400 rounded-full animate-spin"></div>`;
+
+      checkEditUserTimeout = setTimeout(async () => {
+        try {
+          const q = query(collection(db, "users"), where("username", "==", val));
+          const querySnapshot = await getDocs(q);
+
+          if (!querySnapshot.empty) {
+            isEditUsernameAvailable = false;
+            container.className = "input-dark input-error rounded-xl flex items-center px-3.5 py-3";
+            iconContainer.innerHTML = `<i data-lucide="alert-circle" class="w-4 h-4 text-red-400"></i>`;
+          } else {
+            isEditUsernameAvailable = true;
+            container.className = "input-dark input-success rounded-xl flex items-center px-3.5 py-3";
+            iconContainer.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>`;
+          }
+        } catch (err) {
+          isEditUsernameAvailable = true;
+          container.className = "input-dark input-success rounded-xl flex items-center px-3.5 py-3";
+          iconContainer.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>`;
+        }
+        lucide.createIcons();
+      }, 300);
+    }
+
+    window.handleSaveProfile = async function(event) {
+      event.preventDefault();
+      if (!isEditUsernameAvailable) {
+        showToast('Nome de usuário indisponível ou inválido!', false);
+        return;
+      }
+
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const newDisplayName = document.getElementById('edit-displayname-input').value.trim();
+      const newUsername = document.getElementById('edit-username-input').value.trim();
+      const newBio = document.getElementById('edit-bio-input').value.trim();
+
+      const btn = document.getElementById('btn-save-profile');
+      const text = document.getElementById('save-profile-text');
+      const spinner = document.getElementById('save-profile-spinner');
+
+      btn.disabled = true;
+      text.textContent = "Salvando...";
+      spinner.classList.remove('hidden');
+
+      try {
+        const updatePayload = {
+          displayName: newDisplayName || newUsername,
+          username: newUsername,
+          bio: newBio,
+          avatar: tempAvatar || null,
+          banner: tempBanner || null
+        };
+
+        await updateDoc(doc(db, "users", user.uid), updatePayload);
+
+        currentUserData = { ...currentUserData, ...updatePayload };
+        openMainApp(currentUserData.displayName, currentUserData);
+
+        showToast('Perfil atualizado com sucesso!');
+        closeEditProfileModal();
+      } catch (err) {
+        showToast('Erro ao atualizar perfil.', false);
+      } finally {
+        btn.disabled = false;
+        text.textContent = "Salvar alterações";
+        spinner.classList.add('hidden');
+      }
+    }
+
+    window.previewServerImage = function(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      if (file.size > 5 * 1024 * 1024) {
+        showToast('A imagem deve ter no máximo 5MB.', false);
+        event.target.value = '';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          const maxSize = 200;
+
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxSize) {
+              height *= maxSize / width;
+              width = maxSize;
+            }
+          } else {
+            if (height > maxSize) {
+              width *= maxSize / height;
+              height = maxSize;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+
+          selectedServerImage = canvas.toDataURL('image/jpeg', 0.85);
+
+          const previewImg = document.getElementById('server-image-preview');
+          const cameraIcon = document.getElementById('server-camera-icon');
+          previewImg.src = selectedServerImage;
+          previewImg.classList.remove('hidden');
+          cameraIcon.classList.add('hidden');
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    };
+
+    window.openCreateServerModal = function() {
+      const modal = document.getElementById('create-server-modal');
+      modal.classList.remove('hidden');
+      setTimeout(() => modal.classList.remove('opacity-0'), 10);
+    }
+
+    window.closeCreateServerModal = function() {
+      const modal = document.getElementById('create-server-modal');
+      modal.classList.add('opacity-0');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        document.getElementById('server-name-input').value = '';
+        document.getElementById('server-image-file').value = '';
+        document.getElementById('server-image-preview').classList.add('hidden');
+        document.getElementById('server-camera-icon').classList.remove('hidden');
+        selectedServerImage = null;
+      }, 200);
+    }
+
+    window.openJoinServerModal = function() {
+      const modal = document.getElementById('join-server-modal');
+      modal.classList.remove('hidden');
+      setTimeout(() => modal.classList.remove('opacity-0'), 10);
+    }
+
+    window.closeJoinServerModal = function() {
+      const modal = document.getElementById('join-server-modal');
+      modal.classList.add('opacity-0');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        document.getElementById('server-invite-code').value = '';
+      }, 200);
+    }
+
+    window.switchTab = function(tab) {
+      const loginForm = document.getElementById('form-login');
+      const registerForm = document.getElementById('form-register');
+      const loginTab = document.getElementById('tab-login');
+      const registerTab = document.getElementById('tab-register');
+
+      if (tab === 'login') {
+        loginForm.classList.remove('hidden');
+        registerForm.classList.add('hidden');
+        loginTab.className = "flex-1 py-2.5 rounded-lg text-sm font-medium transition-all text-white bg-[#1a2436] shadow-sm border border-slate-700/50";
+        registerTab.className = "flex-1 py-2.5 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white border border-transparent";
+      } else {
+        loginForm.classList.add('hidden');
+        registerForm.classList.remove('hidden');
+        registerTab.className = "flex-1 py-2.5 rounded-lg text-sm font-medium transition-all text-white bg-[#1a2436] shadow-sm border border-slate-700/50";
+        loginTab.className = "flex-1 py-2.5 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white border border-transparent border-transparent";
+      }
+    }
+
+    window.togglePasswordVisibility = function(inputId, iconId) {
+      const input = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.setAttribute('data-lucide', 'eye-off');
+      } else {
+        input.type = 'password';
+        icon.setAttribute('data-lucide', 'eye');
+      }
+      lucide.createIcons();
+    }
+
+    window.handleUsernameInput = function(input) {
+      const lowerVal = input.value.toLowerCase();
+      if (input.value !== lowerVal) input.value = lowerVal;
+      
+      const container = document.getElementById('username-container');
+      const iconContainer = document.getElementById('username-status-icon');
+      const val = input.value.trim();
+      const pattern = /^[a-z0-9._]+$/;
+
+      if (checkUserTimeout) clearTimeout(checkUserTimeout);
+
+      if (!val) {
+        isUsernameAvailable = false;
+        container.className = "input-dark rounded-xl flex items-center px-3.5 py-3";
+        iconContainer.innerHTML = "";
+        return;
+      }
+
+      if (!pattern.test(val) || val.length < 3) {
+        isUsernameAvailable = false;
+        container.className = "input-dark input-error rounded-xl flex items-center px-3.5 py-3";
+        iconContainer.innerHTML = `<i data-lucide="alert-circle" class="w-4 h-4 text-red-400"></i>`;
+        lucide.createIcons();
+        return;
+      }
+
+      container.className = "input-dark rounded-xl flex items-center px-3.5 py-3";
+      iconContainer.innerHTML = `<div class="w-4 h-4 border-2 border-blue-400/30 border-t-blue-400 rounded-full animate-spin"></div>`;
+
+      checkUserTimeout = setTimeout(async () => {
+        try {
+          const q = query(collection(db, "users"), where("username", "==", val));
+          const querySnapshot = await getDocs(q);
+
+          if (!querySnapshot.empty) {
+            isUsernameAvailable = false;
+            container.className = "input-dark input-error rounded-xl flex items-center px-3.5 py-3";
+            iconContainer.innerHTML = `<i data-lucide="alert-circle" class="w-4 h-4 text-red-400"></i>`;
+          } else {
+            isUsernameAvailable = true;
+            container.className = "input-dark input-success rounded-xl flex items-center px-3.5 py-3";
+            iconContainer.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>`;
+          }
+        } catch (err) {
+          isUsernameAvailable = true;
+          container.className = "input-dark input-success rounded-xl flex items-center px-3.5 py-3";
+          iconContainer.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>`;
+        }
+        lucide.createIcons();
+      }, 300);
+    }
+
+    window.openModal = function() {
+      const modal = document.getElementById('recovery-modal');
+      modal.classList.remove('hidden');
+      setTimeout(() => modal.classList.remove('opacity-0'), 10);
+    }
+
+    window.closeModal = function() {
+      const modal = document.getElementById('recovery-modal');
+      modal.classList.add('opacity-0');
+      setTimeout(() => modal.classList.add('hidden'), 200);
+    }
+
+    window.showToast = function(message, isSuccess = true) {
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toast-message');
+      const toastIcon = document.getElementById('toast-icon');
+
+      if (isSuccess) {
+        toast.className = "fixed bottom-20 right-5 bg-blue-600 text-white px-4 py-3 rounded-xl shadow-lg border border-blue-400/30 flex items-center gap-3 translate-y-0 opacity-100 transition-all duration-300 z-50";
+        toastIcon.setAttribute('data-lucide', 'check-circle-2');
+      } else {
+        toast.className = "fixed bottom-20 right-5 bg-rose-600 text-white px-4 py-3 rounded-xl shadow-lg border border-rose-400/30 flex items-center gap-3 translate-y-0 opacity-100 transition-all duration-300 z-50";
+        toastIcon.setAttribute('data-lucide', 'alert-triangle');
+      }
+      lucide.createIcons();
+      toastMessage.textContent = message;
+
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 4000);
+    }
+
+    window.openMainApp = function(displayName, userData = {}) {
+      document.getElementById('auth-screen').classList.add('hidden');
+      document.getElementById('main-app-screen').classList.remove('hidden');
+      const nameClean = displayName || userData.username || 'M';
+      const handleClean = userData.username || 'user';
+      
+      const footerAvatar = document.getElementById('user-avatar-initial');
+      const popoverAvatar = document.getElementById('popover-user-avatar');
+
+      document.getElementById('popover-user-name').textContent = nameClean;
+      document.getElementById('popover-user-handle').textContent = `@${handleClean}`;
+
+      if (userData.avatar) {
+        footerAvatar.style.backgroundImage = `url(${userData.avatar})`;
+        footerAvatar.textContent = '';
+        popoverAvatar.style.backgroundImage = `url(${userData.avatar})`;
+        popoverAvatar.textContent = '';
+      } else {
+        footerAvatar.style.backgroundImage = 'none';
+        footerAvatar.textContent = nameClean.charAt(0).toUpperCase();
+        popoverAvatar.style.backgroundImage = 'none';
+        popoverAvatar.textContent = nameClean.charAt(0).toUpperCase();
+      }
+      
+      lucide.createIcons();
+    }
+
+    window.handleLogout = async function() {
+      try {
+        if (serverUnsubscribe) {
+          serverUnsubscribe();
+          serverUnsubscribe = null;
+        }
+        if (friendsUnsubscribe) {
+          friendsUnsubscribe();
+          friendsUnsubscribe = null;
+        }
+        if (pendingUnsubscribe) {
+          pendingUnsubscribe();
+          pendingUnsubscribe = null;
+        }
+        await signOut(auth);
+        document.getElementById('main-app-screen').classList.add('hidden');
+        document.getElementById('auth-screen').classList.remove('hidden');
+        
+        const menu = document.getElementById('user-profile-menu');
+        menu.classList.add('hidden', 'opacity-0', 'translate-y-2');
+        
+        switchTab('login');
+        showToast('Sessão encerrada com sucesso!');
+      } catch (error) {
+        showToast('Erro ao encerrar sessão.', false);
+      }
+    }
+
+    window.toggleAudioState = function(type) {
+      if (type === 'mic') {
+        isMicMuted = !isMicMuted;
+        const btn = document.getElementById('btn-mic');
+        const icon = document.getElementById('icon-mic');
+        if (isMicMuted) {
+          btn.classList.add('text-red-400');
+          icon.setAttribute('data-lucide', 'mic-off');
+          showToast('Microfone mutado');
+        } else {
+          btn.classList.remove('text-red-400');
+          icon.setAttribute('data-lucide', 'mic');
+          showToast('Microfone ativado');
+        }
+      } else {
+        isDeafened = !isDeafened;
+        const btn = document.getElementById('btn-headphones');
+        if (isDeafened) {
+          btn.classList.add('text-red-400');
+          showToast('Áudio desativado');
+        } else {
+          btn.classList.remove('text-red-400');
+          showToast('Áudio ativado');
+        }
+      }
+      lucide.createIcons();
+    }
+
+    window.handleAuth = async function(event, type) {
+      event.preventDefault();
+
+      if (type === 'login') {
+        const email = document.getElementById('login-identifier').value.trim();
+        const password = document.getElementById('login-password').value;
+        const btn = document.getElementById('btn-login-submit');
+        const btnText = document.getElementById('login-btn-text');
+        const icon = document.getElementById('login-btn-icon');
+        const spinner = document.getElementById('login-spinner');
+
+        if (!email || !password) return;
+
+        btn.disabled = true;
+        btnText.textContent = "A entrar...";
+        icon.classList.add('hidden');
+        spinner.classList.remove('hidden');
+
+        try {
+          const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
+          
+          if (userDoc.exists()) {
+            currentUserData = userDoc.data();
+          } else {
+            const fallbackUsername = email.split('@')[0];
+            currentUserData = { username: fallbackUsername, displayName: fallbackUsername, bio: '', avatar: null, banner: null, friends: [] };
+          }
+          
+          openMainApp(currentUserData.displayName || currentUserData.username, currentUserData);
+          loadUserServers(userCredential.user.uid);
+          setupFriendsListeners(userCredential.user.uid);
+          showToast('Login realizado com sucesso!');
+        } catch (error) {
+          let errorMsg = 'E-mail ou senha incorretos.';
+          if (error.code === 'auth/user-not-found') errorMsg = 'Usuário não encontrado.';
+          if (error.code === 'auth/wrong-password') errorMsg = 'Senha incorreta.';
+          showToast(errorMsg, false);
+        } finally {
+          btn.disabled = false;
+          btnText.textContent = "Continuar";
+          icon.classList.remove('hidden');
+          spinner.classList.add('hidden');
+        }
+
+      } else {
+        const username = document.getElementById('register-username').value.trim();
+        const email = document.getElementById('register-email').value.trim();
+        const password = document.getElementById('register-password').value;
+
+        if (!username || !email || !password) return;
+
+        if (!isUsernameAvailable) {
+          showToast('Nome de usuário indisponível ou já em uso! Escolha outro.', false);
+          return;
+        }
+
+        const btn = document.getElementById('btn-register-submit');
+        const btnText = document.getElementById('register-btn-text');
+        const icon = document.getElementById('register-btn-icon');
+        const spinner = document.getElementById('register-spinner');
+
+        btn.disabled = true;
+        btnText.textContent = "A criar...";
+        icon.classList.add('hidden');
+        spinner.classList.remove('hidden');
+
+        try {
+          const q = query(collection(db, "users"), where("username", "==", username));
+          const querySnapshot = await getDocs(q);
+
+          if (!querySnapshot.empty) {
+            showToast('Este nome de usuário já foi registrado por outra pessoa!', false);
+            btn.disabled = false;
+            btnText.textContent = "Continuar";
+            icon.classList.remove('hidden');
+            spinner.classList.add('hidden');
+            return;
+          }
+
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          
+          const newUserObj = {
+            username: username,
+            displayName: username,
+            email: email,
+            bio: '',
+            avatar: null,
+            banner: null,
+            friends: [],
+            createdAt: new Date().toISOString()
+          };
+
+          await setDoc(doc(db, "users", userCredential.user.uid), newUserObj);
+
+          currentUserData = newUserObj;
+          showToast('Conta criada com sucesso!');
+          openMainApp(username, currentUserData);
+          loadUserServers(userCredential.user.uid);
+          setupFriendsListeners(userCredential.user.uid);
+        } catch (error) {
+          let errorMsg = `Erro: ${error.message}`;
+          if (error.code === 'auth/email-already-in-use') errorMsg = 'Este e-mail já está cadastrado.';
+          if (error.code === 'auth/weak-password') errorMsg = 'A senha é muito fraca (mínimo 6 caracteres).';
+          
+          showToast(errorMsg, false);
+        } finally {
+          btn.disabled = false;
+          btnText.textContent = "Continuar";
+          icon.classList.remove('hidden');
+          spinner.classList.add('hidden');
+        }
+      }
+    }
+
+    window.handleRecovery = async function(event) {
+      event.preventDefault();
+      const emailInput = document.getElementById('recovery-email');
+      const btn = document.getElementById('btn-recovery-submit');
+      const btnText = document.getElementById('recovery-btn-text');
+      const spinner = document.getElementById('recovery-spinner');
+      const userEmail = emailInput.value.trim();
+
+      btn.disabled = true;
+      btnText.textContent = "A enviar...";
+      spinner.classList.remove('hidden');
+
+      try {
+        await sendPasswordResetEmail(auth, userEmail);
+        showToast(`Link de recuperação enviado para ${userEmail}!`);
+        closeModal();
+        emailInput.value = '';
+      } catch (error) {
+        showToast('Falha ao enviar e-mail de recuperação.', false);
+      } finally {
+        btn.disabled = false;
+        btnText.textContent = "Enviar link";
+        spinner.classList.add('hidden');
+      }
+    }
+  </script>
+</body>
+                </html>
