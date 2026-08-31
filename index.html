@@ -71,7 +71,7 @@
     .support-card { background: linear-gradient(135deg, #281245 0%, #150d26 100%); border: 1px solid rgba(168, 85, 247, 0.25); transition: all 0.2s ease; }
     .support-card:hover { border-color: rgba(168, 85, 247, 0.45); box-shadow: 0 0 20px rgba(168, 85, 247, 0.15); }
     .bottom-bar { background-color: #070a12; border-top: 1px solid rgba(255, 255, 255, 0.05); }
-    .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
 
     .crop-viewport-circle {
@@ -418,7 +418,6 @@
     </footer>
   </div>
 
-  <!-- MODAL AMIGOS -->
   <div id="friends-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden opacity-0 transition-opacity duration-200">
     <div class="w-full max-w-[500px] bg-[#0c1220] border border-slate-800/90 rounded-2xl p-6 shadow-2xl relative text-slate-100 max-h-[90vh] overflow-y-auto custom-scrollbar">
       <button onclick="closeFriendsModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white transition-colors z-10">
@@ -477,7 +476,6 @@
     </div>
   </div>
 
-  <!-- MODAL EDITAR PERFIL -->
   <div id="edit-profile-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden opacity-0 transition-opacity duration-200">
     <div class="w-full max-w-[500px] bg-[#0c1220] border border-slate-800/90 rounded-2xl p-6 shadow-2xl relative text-slate-100 max-h-[90vh] overflow-y-auto custom-scrollbar">
       <button onclick="closeEditProfileModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white transition-colors z-10">
@@ -490,6 +488,7 @@
       </div>
 
       <form onsubmit="handleSaveProfile(event)" class="space-y-5">
+        
         <div class="relative mb-8">
           <input type="file" id="edit-banner-file" accept="image/*" class="hidden" onchange="previewEditImage(event, 'banner')">
           <input type="file" id="edit-avatar-file" accept="image/*" class="hidden" onchange="previewEditImage(event, 'avatar')">
@@ -546,43 +545,28 @@
     </div>
   </div>
 
-  <!-- MODAL CONFIGURAÇÕES DO SERVIDOR (GERAL, CONVITES, ADMINISTRAÇÃO, BANIMENTOS, SEGURANÇA) -->
   <div id="server-settings-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden opacity-0 transition-opacity duration-200">
-    <div class="w-full max-w-[540px] bg-[#0c1220] border border-slate-800/90 rounded-2xl p-6 shadow-2xl relative text-slate-100 max-h-[92vh] overflow-y-auto custom-scrollbar">
-      <button onclick="closeServerSettingsModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white transition-colors z-20">
+    <div class="w-full max-w-[520px] bg-[#0c1220] border border-slate-800/90 rounded-2xl p-6 shadow-2xl relative text-slate-100 max-h-[90vh] overflow-y-auto custom-scrollbar">
+      <button onclick="closeServerSettingsModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white transition-colors z-10">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
 
-      <!-- CABEÇALHO DO SERVIDOR (IGUAL ÀS FOTOS) -->
-      <div class="flex items-center gap-3.5 mb-5 p-3.5 bg-[#080d1a] border border-slate-800/80 rounded-2xl">
-        <div id="modal-server-header-icon" class="w-12 h-12 rounded-2xl bg-blue-600 text-white font-bold flex items-center justify-center text-xl shadow-md shrink-0 bg-cover bg-center border border-blue-400/30">O</div>
-        <div class="flex flex-col min-w-0">
-          <span class="text-[10px] font-bold text-blue-400 tracking-wider uppercase">CONFIGURAÇÕES DO SERVIDOR</span>
-          <h2 id="modal-server-header-title" class="text-lg font-bold text-white tracking-tight truncate">Opa</h2>
-          <span id="modal-server-header-sub" class="text-xs text-slate-400">2 membros · 0 canais</span>
-        </div>
+      <div class="mb-4">
+        <p class="text-[10px] font-bold text-blue-400 tracking-wider uppercase mb-1">Gerenciamento</p>
+        <h2 class="text-xl font-bold text-white tracking-tight">Configurações do Servidor</h2>
       </div>
 
-      <!-- ABAS NAVEGAÇÃO HORIZONTAL -->
-      <div class="flex border-b border-slate-800/80 mb-5 overflow-x-auto custom-scrollbar gap-2 pb-1 text-xs">
-        <button id="server-tab-btn-general" onclick="switchServerSettingsTab('general')" class="px-3 py-2 font-bold text-blue-400 bg-[#162035] rounded-lg transition-all whitespace-nowrap">
+      <div class="flex border-b border-slate-800/80 mb-5 gap-4">
+        <button id="server-tab-btn-general" onclick="switchServerSettingsTab('general')" class="pb-2 text-xs font-bold text-blue-400 border-b-2 border-blue-500 transition-all flex items-center gap-1.5">
+          <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
           Geral
         </button>
-        <button id="server-tab-btn-invites" onclick="switchServerSettingsTab('invites')" class="px-3 py-2 font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all whitespace-nowrap">
+        <button id="server-tab-btn-invites" onclick="switchServerSettingsTab('invites')" class="pb-2 text-xs font-semibold text-slate-400 border-b-2 border-transparent hover:text-slate-200 transition-all flex items-center gap-1.5">
+          <i data-lucide="link" class="w-3.5 h-3.5"></i>
           Convites
-        </button>
-        <button id="server-tab-btn-admin" onclick="switchServerSettingsTab('admin')" class="px-3 py-2 font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all whitespace-nowrap">
-          Administração
-        </button>
-        <button id="server-tab-btn-bans" onclick="switchServerSettingsTab('bans')" class="px-3 py-2 font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all whitespace-nowrap">
-          Banimentos
-        </button>
-        <button id="server-tab-btn-security" onclick="switchServerSettingsTab('security')" class="px-3 py-2 font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all whitespace-nowrap">
-          Segurança
         </button>
       </div>
 
-      <!-- ABA 1: GERAL -->
       <div id="server-tab-general">
         <form onsubmit="handleSaveServerSettings(event)" class="space-y-5">
           <div class="relative mb-8">
@@ -632,7 +616,6 @@
         </form>
       </div>
 
-      <!-- ABA 2: CONVITES -->
       <div id="server-tab-invites" class="hidden space-y-5">
         <div class="bg-[#080d1a] border border-slate-800/80 rounded-xl p-4 space-y-3">
           <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
@@ -669,103 +652,20 @@
 
         <div class="space-y-2">
           <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-1">Convites Ativos</span>
+
           <div id="invites-list-container" class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar pr-1">
             <div class="text-center py-6 text-slate-500 text-xs">Carregando convites...</div>
           </div>
         </div>
-      </div>
 
-      <!-- ABA 3: ADMINISTRAÇÃO (FOTO 1) -->
-      <div id="server-tab-admin" class="hidden space-y-4">
-        <div>
-          <h3 class="text-base font-bold text-white">Administração</h3>
-          <p class="text-xs text-slate-400 mt-0.5">Hierarquia e ferramentas de moderação.</p>
-        </div>
-
-        <div class="bg-[#080d1a] border border-slate-800/90 rounded-2xl p-4 space-y-2">
-          <div class="flex items-center gap-2 text-slate-200 font-bold text-sm">
-            <i data-lucide="shield-check" class="w-4 h-4 text-blue-400"></i>
-            <span>Administração & Cargos</span>
-          </div>
-          <p class="text-xs text-slate-400 leading-relaxed">
-            Selecione o cargo e a cor de destaque para cada membro do servidor. Administradores podem gerenciar canais e convites.
-          </p>
-        </div>
-
-        <div class="space-y-2.5">
-          <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-1">Membros e Cargos</span>
-          <div id="admin-members-list" class="space-y-2.5 max-h-72 overflow-y-auto custom-scrollbar pr-1">
-            <div class="text-center py-6 text-slate-500 text-xs">Carregando membros...</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ABA 4: BANIMENTOS (FOTO 2) -->
-      <div id="server-tab-bans" class="hidden space-y-4">
-        <div>
-          <h3 class="text-base font-bold text-white">Banimentos</h3>
-          <p class="text-xs text-slate-400 mt-0.5">Revise usuários banidos e permita que voltem por convite.</p>
-        </div>
-
-        <!-- BUSCA COM LUPA PARA BANIR MEMBRO -->
-        <div class="bg-[#080d1a] border border-slate-800/90 rounded-2xl p-4 space-y-3">
-          <label class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-            <i data-lucide="user-x" class="w-4 h-4 text-rose-400"></i>
-            Banir membro do servidor
-          </label>
-          
-          <div class="input-dark rounded-xl flex items-center px-3.5 py-2.5">
-            <i data-lucide="search" class="w-4 h-4 text-slate-500 mr-2.5 shrink-0"></i>
-            <input type="text" id="search-member-ban-input" oninput="handleFilterMembersToBan(this.value)" placeholder="Buscar membro por nome para banir..." class="bg-transparent border-none outline-none w-full text-xs placeholder-slate-600 text-slate-100">
-          </div>
-
-          <div id="search-members-ban-results" class="space-y-1.5 max-h-40 overflow-y-auto custom-scrollbar">
-            <!-- Resultados de membros para banir aparecem aqui -->
-          </div>
-        </div>
-
-        <!-- LISTA DE USUÁRIOS BANIDOS -->
-        <div class="bg-[#080d1a] border border-slate-800/90 rounded-2xl p-4 space-y-3">
-          <div>
-            <h4 class="text-xs font-bold text-slate-200">Usuários banidos</h4>
-            <p class="text-[11px] text-slate-400 mt-0.5">Consulte o motivo, quando ocorreu e quem aplicou cada banimento.</p>
-          </div>
-
-          <div id="banned-users-list-container" class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar">
-            <div class="p-6 text-center text-slate-500 text-xs border border-dashed border-slate-800/80 rounded-xl">
-              <span class="font-semibold text-slate-400 block mb-1">Nenhum usuário banido</span>
-              <span class="text-[11px]">Os banimentos ativos aparecerão aqui.</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ABA 5: SEGURANÇA (FOTO 3) -->
-      <div id="server-tab-security" class="hidden space-y-4">
-        <div>
-          <h3 class="text-base font-bold text-rose-400">Segurança</h3>
-          <p class="text-xs text-slate-400 mt-0.5">Ações importantes e permanentes.</p>
-        </div>
-
-        <div class="bg-[#080d1a] border border-rose-950/40 rounded-2xl p-5 space-y-4">
-          <div>
-            <h4 id="security-action-title" class="text-sm font-bold text-slate-100">Excluir servidor</h4>
-            <p id="security-action-desc" class="text-xs text-slate-400 mt-1 leading-relaxed">
-              Apaga permanentemente canais, mensagens e convites. Essa ação não pode ser desfeita.
-            </p>
-          </div>
-
-          <button type="button" id="btn-security-action" onclick="handleSecurityServerAction()" class="px-5 py-2.5 rounded-xl bg-rose-900/60 hover:bg-rose-800 text-rose-100 text-xs font-bold transition-all border border-rose-700/50 flex items-center gap-2 shadow-lg shadow-rose-950/40">
-            <i data-lucide="trash-2" class="w-4 h-4"></i>
-            <span id="btn-security-action-text">Excluir servidor</span>
-          </button>
+        <div class="flex items-center justify-end pt-4 border-t border-slate-800/80">
+          <button type="button" onclick="closeServerSettingsModal()" class="px-5 py-2.5 text-xs font-semibold text-slate-300 hover:text-white transition-colors">Fechar</button>
         </div>
       </div>
 
     </div>
   </div>
 
-  <!-- MODAL CORTAR IMAGEM -->
   <div id="image-crop-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-[60] hidden opacity-0 transition-opacity duration-200">
     <div class="w-full max-w-[420px] bg-[#0c1220] border border-slate-800/90 rounded-2xl p-6 shadow-2xl relative text-slate-100 flex flex-col items-center">
       <h3 id="crop-title-text" class="text-lg font-bold text-white mb-4">Ajustar imagem</h3>
@@ -788,7 +688,6 @@
     </div>
   </div>
 
-  <!-- MODAL CRIAR SERVIDOR -->
   <div id="create-server-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-start sm:items-center justify-center p-4 pt-16 sm:pt-4 z-50 hidden opacity-0 transition-opacity duration-200">
     <div class="w-full max-w-[420px] bg-[#0c1220] border border-slate-800/90 rounded-2xl p-6 shadow-2xl relative text-slate-100">
       <button onclick="closeCreateServerModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white transition-colors">
@@ -831,7 +730,6 @@
     </div>
   </div>
 
-  <!-- MODAL ENTRAR EM UM SERVIDOR -->
   <div id="join-server-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-start sm:items-center justify-center p-4 pt-16 sm:pt-4 z-50 hidden opacity-0 transition-opacity duration-200">
     <div class="w-full max-w-[420px] bg-[#0c1220] border border-slate-800/90 rounded-2xl p-6 shadow-2xl relative text-slate-100">
       <button onclick="closeJoinServerModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white transition-colors">
@@ -861,7 +759,6 @@
     </div>
   </div>
 
-  <!-- MODAL RECUPERAÇÃO DE SENHA -->
   <div id="recovery-modal" class="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden opacity-0 transition-opacity duration-200">
     <div class="w-full max-w-[380px] bg-[#0b1220] border border-slate-800 rounded-2xl p-6 shadow-2xl relative">
       <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors">
@@ -891,7 +788,6 @@
     </div>
   </div>
 
-  <!-- TOAST -->
   <div id="toast" class="fixed bottom-20 right-5 bg-blue-600 text-white px-4 py-3 rounded-xl shadow-lg border border-blue-400/30 flex items-center gap-3 translate-y-20 opacity-0 transition-all duration-300 z-50">
     <i id="toast-icon" data-lucide="info" class="w-5 h-5"></i>
     <span id="toast-message" class="text-sm font-medium"></span>
@@ -900,7 +796,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, where, getDocs, addDoc, deleteDoc, serverTimestamp, arrayUnion, arrayRemove, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, where, getDocs, addDoc, deleteDoc, serverTimestamp, arrayUnion, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCjWu7afU7FXUgvNB5laffNGdXMyCV5J78",
@@ -921,7 +817,6 @@
     let userServers = [];
     let userServersCount = 0;
     let activeServerData = null;
-    let activeServerMembersDetailed = [];
     let selectedServerImage = null;
     let checkUserTimeout = null;
     let checkEditUserTimeout = null;
@@ -983,7 +878,7 @@
       setupCropInteractions();
     });
 
-    // SISTEMA DE AMIGOS & DMS
+    // FRIENDS & REQUESTS SYSTEM
     window.openFriendsModal = function() {
       const modal = document.getElementById('friends-modal');
       switchFriendsTab('list');
@@ -1324,7 +1219,6 @@
       }
     }
 
-    // SERVIDORES
     async function loadUserServers(userId) {
       try {
         const q = query(collection(db, "servers"), where("members", "array-contains", userId));
@@ -1382,10 +1276,6 @@
           icon: selectedServerImage || null,
           banner: null,
           nicknames: {},
-          roles: {
-            [user.uid]: { role: 'Dono', color: '#3b82f6' }
-          },
-          bannedUsers: [],
           ownerId: user.uid,
           members: [user.uid],
           createdAt: serverTimestamp()
@@ -1403,7 +1293,11 @@
         showToast(`Servidor "${serverName}" criado com sucesso! (${userServersCount}/5)`);
       } catch (error) {
         console.error("Erro detalhado ao criar servidor:", error);
-        showToast('Erro ao criar servidor no banco de dados.', false);
+        let msg = 'Erro ao criar servidor no banco de dados.';
+        if (error.code === 'permission-denied') {
+          msg = 'Erro de permissão! Verifique as regras do Firestore.';
+        }
+        showToast(msg, false);
       } finally {
         btn.disabled = false;
         btnText.textContent = "Criar";
@@ -1457,27 +1351,13 @@
           return;
         }
 
-        const serverData = { id: serverSnap.id, ...serverSnap.data() };
-
-        // Verificar se usuário está banido
-        const bannedList = serverData.bannedUsers || [];
-        if (bannedList.some(b => b.uid === user.uid)) {
-          showToast('Você está banido deste servidor.', false);
-          return;
-        }
-
         await updateDoc(inviteRef, { uses: (invData.uses || 0) + 1 });
 
-        const serverRoles = serverData.roles || {};
-        if (!serverRoles[user.uid]) {
-          serverRoles[user.uid] = { role: 'Membro', color: '#94a3b8' };
-        }
-
         await updateDoc(serverRef, {
-          members: arrayUnion(user.uid),
-          roles: serverRoles
+          members: arrayUnion(user.uid)
         });
 
+        const serverData = { id: serverSnap.id, ...serverSnap.data() };
         if (!userServers.some(s => s.id === serverData.id)) {
           userServers.push(serverData);
           renderServerIconInSidebar(serverData);
@@ -1549,17 +1429,14 @@
       }
 
       const serverRef = doc(db, "servers", server.id);
-      serverUnsubscribe = onSnapshot(serverRef, async (docSnap) => {
+      serverUnsubscribe = onSnapshot(serverRef, (docSnap) => {
         if (docSnap.exists()) {
           const updatedData = docSnap.data();
           activeServerData = { id: docSnap.id, ...updatedData };
           
           const members = updatedData.members || [];
-          const countText = members.length === 1 ? '1 membro · 0 canais' : `${members.length} membros · 0 canais`;
-          document.getElementById('server-members-count-text').textContent = `${members.length} membros`;
-          
-          updateServerModalHeader();
-          await fetchServerMembersDetailed(members);
+          const countText = members.length === 1 ? '1 membro' : `${members.length} membros`;
+          document.getElementById('server-members-count-text').textContent = countText;
         }
       });
 
@@ -1600,46 +1477,9 @@
       document.querySelectorAll('.active-indicator').forEach(el => el.classList.add('hidden'));
     }
 
-    async function fetchServerMembersDetailed(memberUids) {
-      activeServerMembersDetailed = [];
-      for (const uid of memberUids) {
-        try {
-          const uSnap = await getDoc(doc(db, "users", uid));
-          if (uSnap.exists()) {
-            activeServerMembersDetailed.push({ uid, ...uSnap.data() });
-          } else {
-            activeServerMembersDetailed.push({ uid, username: 'Desconhecido', displayName: 'Usuário' });
-          }
-        } catch (e) {
-          activeServerMembersDetailed.push({ uid, username: 'Erro', displayName: 'Usuário' });
-        }
-      }
-    }
-
-    function updateServerModalHeader() {
-      if (!activeServerData) return;
-      const titleEl = document.getElementById('modal-server-header-title');
-      const subEl = document.getElementById('modal-server-header-sub');
-      const iconEl = document.getElementById('modal-server-header-icon');
-
-      titleEl.textContent = activeServerData.name;
-      const memCount = (activeServerData.members || []).length;
-      subEl.textContent = `${memCount} membro${memCount === 1 ? '' : 's'} · 0 canais`;
-
-      if (activeServerData.icon) {
-        iconEl.style.backgroundImage = `url(${activeServerData.icon})`;
-        iconEl.textContent = '';
-      } else {
-        iconEl.style.backgroundImage = 'none';
-        iconEl.textContent = activeServerData.name.charAt(0).toUpperCase();
-      }
-    }
-
-    // SERVER SETTINGS MODAL TABS
+    // SERVER SETTINGS MODAL FUNCTIONS
     window.openServerSettingsModal = function() {
       if (!activeServerData) return;
-
-      updateServerModalHeader();
 
       const modal = document.getElementById('server-settings-modal');
       const nameInput = document.getElementById('edit-servername-input');
@@ -1673,22 +1513,6 @@
         iconPreview.textContent = (activeServerData.name || 'S').charAt(0).toUpperCase();
       }
 
-      // Configurar botão de segurança
-      const isOwner = activeServerData.ownerId === auth.currentUser?.uid;
-      const secTitle = document.getElementById('security-action-title');
-      const secDesc = document.getElementById('security-action-desc');
-      const secBtnText = document.getElementById('btn-security-action-text');
-      
-      if (isOwner) {
-        secTitle.textContent = "Excluir servidor";
-        secDesc.textContent = "Apaga permanentemente canais, mensagens e convites. Essa ação não pode ser desfeita.";
-        secBtnText.textContent = "Excluir servidor";
-      } else {
-        secTitle.textContent = "Sair do servidor";
-        secDesc.textContent = "Você deixará de ser membro deste servidor e precisará de um novo convite para retornar.";
-        secBtnText.textContent = "Sair do servidor";
-      }
-
       switchServerSettingsTab('general');
       modal.classList.remove('hidden');
       setTimeout(() => modal.classList.remove('opacity-0'), 10);
@@ -1701,317 +1525,28 @@
     }
 
     window.switchServerSettingsTab = function(tab) {
-      const tabs = ['general', 'invites', 'admin', 'bans', 'security'];
-      tabs.forEach(t => {
-        const el = document.getElementById(`server-tab-${t}`);
-        const btn = document.getElementById(`server-tab-btn-${t}`);
-        if (el) el.classList.add('hidden');
-        if (btn) {
-          btn.className = "px-3 py-2 font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all whitespace-nowrap";
-        }
-      });
+      const tabGeneral = document.getElementById('server-tab-general');
+      const tabInvites = document.getElementById('server-tab-invites');
+      const btnGeneral = document.getElementById('server-tab-btn-general');
+      const btnInvites = document.getElementById('server-tab-btn-invites');
 
-      const activeEl = document.getElementById(`server-tab-${tab}`);
-      const activeBtn = document.getElementById(`server-tab-btn-${tab}`);
-      if (activeEl) activeEl.classList.remove('hidden');
-      if (activeBtn) {
-        activeBtn.className = "px-3 py-2 font-bold text-blue-400 bg-[#162035] rounded-lg transition-all whitespace-nowrap";
-      }
+      if (tab === 'general') {
+        tabGeneral.classList.remove('hidden');
+        tabInvites.classList.add('hidden');
 
-      if (tab === 'invites') loadServerInvites();
-      if (tab === 'admin') loadAdminMembersList();
-      if (tab === 'bans') {
-        loadBannedUsersList();
-        renderMembersToBanList('');
-      }
-    }
-
-    // --- ABA ADMINISTRAÇÃO: CARGOS E CORES ---
-    async function loadAdminMembersList() {
-      const container = document.getElementById('admin-members-list');
-      if (!activeServerData) return;
-      container.innerHTML = `<div class="text-center py-6 text-slate-500 text-xs">Carregando membros...</div>`;
-
-      if (activeServerMembersDetailed.length === 0) {
-        await fetchServerMembersDetailed(activeServerData.members || []);
-      }
-
-      container.innerHTML = '';
-      const serverRoles = activeServerData.roles || {};
-      const currentUserId = auth.currentUser?.uid;
-      const isOwner = activeServerData.ownerId === currentUserId;
-
-      activeServerMembersDetailed.forEach(member => {
-        const memberRoleData = serverRoles[member.uid] || { role: (member.uid === activeServerData.ownerId ? 'Dono' : 'Membro'), color: (member.uid === activeServerData.ownerId ? '#3b82f6' : '#94a3b8') };
-        const isSelf = member.uid === currentUserId;
-        const isTargetOwner = member.uid === activeServerData.ownerId;
-
-        const card = document.createElement('div');
-        card.className = "bg-[#080d1a] border border-slate-800/80 rounded-xl p-3 flex items-center justify-between gap-3";
-
-        let avatarHtml = member.avatar 
-          ? `<div class="w-10 h-10 rounded-full bg-cover bg-center shrink-0 border border-slate-700" style="background-image: url(${member.avatar})"></div>`
-          : `<div class="w-10 h-10 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-sm shrink-0">${(member.displayName || member.username || 'U').charAt(0).toUpperCase()}</div>`;
-
-        card.innerHTML = `
-          <div class="flex items-center gap-3 min-w-0 flex-1">
-            ${avatarHtml}
-            <div class="flex flex-col min-w-0">
-              <div class="flex items-center gap-2">
-                <span class="font-bold text-white text-xs truncate">${member.displayName || member.username}</span>
-                ${isTargetOwner ? `<span class="px-1.5 py-0.5 rounded bg-blue-600/30 text-blue-400 text-[9px] font-bold uppercase">Dono</span>` : ''}
-              </div>
-              <span class="text-[11px] text-slate-400 truncate">@${member.username}</span>
-            </div>
-          </div>
-
-          <div class="flex items-center gap-2 shrink-0">
-            <!-- SELETOR DE COR -->
-            <div class="flex items-center gap-1.5 bg-[#0c1220] px-2 py-1 rounded-lg border border-slate-800">
-              <input type="color" value="${memberRoleData.color || '#3b82f6'}" ${(!isOwner && !isSelf) ? 'disabled' : ''} onchange="updateMemberRoleColor('${member.uid}', this.value)" class="w-5 h-5 rounded cursor-pointer bg-transparent border-0 outline-none" title="Cor de destaque">
-            </div>
-
-            <!-- SELETOR DE CARGO -->
-            <select ${(!isOwner || isTargetOwner) ? 'disabled' : ''} onchange="updateMemberRoleTitle('${member.uid}', this.value)" class="bg-[#0c1220] border border-slate-700 text-slate-200 text-xs rounded-lg px-2.5 py-1.5 outline-none font-medium">
-              <option value="Dono" ${memberRoleData.role === 'Dono' ? 'selected' : ''} disabled>Dono</option>
-              <option value="Administrador" ${memberRoleData.role === 'Administrador' ? 'selected' : ''}>Administrador</option>
-              <option value="Moderador" ${memberRoleData.role === 'Moderador' ? 'selected' : ''}>Moderador</option>
-              <option value="Membro" ${memberRoleData.role === 'Membro' ? 'selected' : ''}>Membro</option>
-            </select>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-      lucide.createIcons();
-    }
-
-    window.updateMemberRoleTitle = async function(memberUid, newRole) {
-      if (!activeServerData) return;
-      try {
-        const serverRef = doc(db, "servers", activeServerData.id);
-        const roles = activeServerData.roles || {};
-        roles[memberUid] = {
-          ...(roles[memberUid] || {}),
-          role: newRole,
-          color: roles[memberUid]?.color || '#3b82f6'
-        };
-        await updateDoc(serverRef, { roles });
-        showToast(`Cargo atualizado para "${newRole}"!`);
-      } catch (err) {
-        showToast('Erro ao atualizar cargo.', false);
-      }
-    }
-
-    window.updateMemberRoleColor = async function(memberUid, newColor) {
-      if (!activeServerData) return;
-      try {
-        const serverRef = doc(db, "servers", activeServerData.id);
-        const roles = activeServerData.roles || {};
-        roles[memberUid] = {
-          ...(roles[memberUid] || {}),
-          role: roles[memberUid]?.role || 'Membro',
-          color: newColor
-        };
-        await updateDoc(serverRef, { roles });
-        showToast('Cor do membro atualizada!');
-      } catch (err) {
-        showToast('Erro ao atualizar cor.', false);
-      }
-    }
-
-    // --- ABA BANIMENTOS: PESQUISA E BANIR/DESBANIR ---
-    window.handleFilterMembersToBan = function(queryStr) {
-      renderMembersToBanList(queryStr.trim().toLowerCase());
-    }
-
-    function renderMembersToBanList(queryStr) {
-      const container = document.getElementById('search-members-ban-results');
-      if (!activeServerData) return;
-
-      const currentUserId = auth.currentUser?.uid;
-      const isOwner = activeServerData.ownerId === currentUserId;
-
-      if (!queryStr) {
-        container.innerHTML = '';
-        return;
-      }
-
-      const filtered = activeServerMembersDetailed.filter(m => {
-        if (m.uid === currentUserId || m.uid === activeServerData.ownerId) return false;
-        return (m.displayName || '').toLowerCase().includes(queryStr) || (m.username || '').toLowerCase().includes(queryStr);
-      });
-
-      if (filtered.length === 0) {
-        container.innerHTML = `<div class="text-center py-2 text-slate-500 text-xs">Nenhum membro encontrado.</div>`;
-        return;
-      }
-
-      container.innerHTML = '';
-      filtered.forEach(m => {
-        const item = document.createElement('div');
-        item.className = "flex items-center justify-between p-2.5 bg-[#0c1220] border border-slate-800 rounded-xl";
-        item.innerHTML = `
-          <div class="flex items-center gap-2.5 min-w-0">
-            <div class="w-7 h-7 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-xs shrink-0">${(m.displayName || m.username || 'U').charAt(0).toUpperCase()}</div>
-            <div class="flex flex-col min-w-0">
-              <span class="text-xs font-bold text-white truncate">${m.displayName || m.username}</span>
-              <span class="text-[10px] text-slate-400 truncate">@${m.username}</span>
-            </div>
-          </div>
-          <button type="button" onclick="promptBanUser('${m.uid}', '${m.displayName || m.username}')" class="px-3 py-1.5 rounded-lg bg-rose-600/20 hover:bg-rose-600/40 text-rose-400 border border-rose-500/30 text-xs font-bold transition-colors">
-            Banir
-          </button>
-        `;
-        container.appendChild(item);
-      });
-      lucide.createIcons();
-    }
-
-    window.promptBanUser = async function(targetUid, targetName) {
-      if (!activeServerData) return;
-      const reason = prompt(`Motivo do banimento de "${targetName}":`, "Violação das regras do servidor");
-      if (reason === null) return;
-
-      const user = auth.currentUser;
-      try {
-        const serverRef = doc(db, "servers", activeServerData.id);
-        const banEntry = {
-          uid: targetUid,
-          name: targetName,
-          reason: reason || "Nenhum motivo informado",
-          bannedBy: currentUserData?.displayName || currentUserData?.username || "Admin",
-          bannedAt: new Date().toLocaleDateString('pt-BR')
-        };
-
-        await updateDoc(serverRef, {
-          members: arrayRemove(targetUid),
-          bannedUsers: arrayUnion(banEntry)
-        });
-
-        showToast(`${targetName} foi banido do servidor.`);
-        document.getElementById('search-member-ban-input').value = '';
-        renderMembersToBanList('');
-        loadBannedUsersList();
-      } catch (err) {
-        console.error(err);
-        showToast('Erro ao banir usuário.', false);
-      }
-    }
-
-    function loadBannedUsersList() {
-      const container = document.getElementById('banned-users-list-container');
-      if (!activeServerData) return;
-
-      const banned = activeServerData.bannedUsers || [];
-      if (banned.length === 0) {
-        container.innerHTML = `
-          <div class="p-6 text-center text-slate-500 text-xs border border-dashed border-slate-800/80 rounded-xl">
-            <span class="font-semibold text-slate-400 block mb-1">Nenhum usuário banido</span>
-            <span class="text-[11px]">Os banimentos ativos aparecerão aqui.</span>
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = '';
-      banned.forEach(b => {
-        const item = document.createElement('div');
-        item.className = "bg-[#0c1220] border border-slate-800 rounded-xl p-3 flex items-center justify-between gap-3";
-        item.innerHTML = `
-          <div class="flex flex-col min-w-0 gap-0.5">
-            <span class="font-bold text-white text-xs truncate">${b.name || 'Usuário'}</span>
-            <span class="text-[11px] text-slate-400 truncate">Motivo: <span class="text-slate-300">${b.reason}</span></span>
-            <span class="text-[10px] text-slate-500">Banido por ${b.bannedBy} em ${b.bannedAt}</span>
-          </div>
-          <button type="button" onclick="unbanUser('${b.uid}')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition-colors shrink-0">
-            Desbanir
-          </button>
-        `;
-        container.appendChild(item);
-      });
-      lucide.createIcons();
-    }
-
-    window.unbanUser = async function(targetUid) {
-      if (!activeServerData) return;
-      try {
-        const serverRef = doc(db, "servers", activeServerData.id);
-        const banned = activeServerData.bannedUsers || [];
-        const targetEntry = banned.find(b => b.uid === targetUid);
-        if (!targetEntry) return;
-
-        await updateDoc(serverRef, {
-          bannedUsers: arrayRemove(targetEntry)
-        });
-
-        showToast('Usuário desbanido com sucesso!');
-        loadBannedUsersList();
-      } catch (err) {
-        showToast('Erro ao desbanir usuário.', false);
-      }
-    }
-
-    // --- ABA SEGURANÇA: EXCLUIR / SAIR DO SERVIDOR ---
-    window.handleSecurityServerAction = async function() {
-      if (!activeServerData) return;
-      const user = auth.currentUser;
-      if (!user) return;
-
-      const isOwner = activeServerData.ownerId === user.uid;
-
-      if (isOwner) {
-        const confirmDelete = confirm(`ATENÇÃO: Tem certeza de que deseja EXCLUIR permanentemente o servidor "${activeServerData.name}"? Todas as mensagens e configurações serão apagadas.`);
-        if (!confirmDelete) return;
-
-        try {
-          // Deletar convites vinculados
-          const qInvites = query(collection(db, "invites"), where("serverId", "==", activeServerData.id));
-          const invSnap = await getDocs(qInvites);
-          invSnap.forEach(async (d) => {
-            await deleteDoc(doc(db, "invites", d.id));
-          });
-
-          // Deletar o servidor
-          await deleteDoc(doc(db, "servers", activeServerData.id));
-
-          // Remover da barra lateral
-          const el = document.getElementById(`server-item-${activeServerData.id}`);
-          if (el) el.remove();
-
-          userServers = userServers.filter(s => s.id !== activeServerData.id);
-          userServersCount = Math.max(0, userServersCount - 1);
-
-          closeServerSettingsModal();
-          switchToHomeView();
-          showToast(`Servidor "${activeServerData.name}" excluído com sucesso.`);
-        } catch (err) {
-          console.error(err);
-          showToast('Erro ao excluir servidor.', false);
-        }
+        btnGeneral.className = "pb-2 text-xs font-bold text-blue-400 border-b-2 border-blue-500 transition-all flex items-center gap-1.5";
+        btnInvites.className = "pb-2 text-xs font-semibold text-slate-400 border-b-2 border-transparent hover:text-slate-200 transition-all flex items-center gap-1.5";
       } else {
-        const confirmLeave = confirm(`Deseja realmente sair do servidor "${activeServerData.name}"?`);
-        if (!confirmLeave) return;
+        tabGeneral.classList.add('hidden');
+        tabInvites.classList.remove('hidden');
 
-        try {
-          const serverRef = doc(db, "servers", activeServerData.id);
-          await updateDoc(serverRef, {
-            members: arrayRemove(user.uid)
-          });
+        btnInvites.className = "pb-2 text-xs font-bold text-blue-400 border-b-2 border-blue-500 transition-all flex items-center gap-1.5";
+        btnGeneral.className = "pb-2 text-xs font-semibold text-slate-400 border-b-2 border-transparent hover:text-slate-200 transition-all flex items-center gap-1.5";
 
-          const el = document.getElementById(`server-item-${activeServerData.id}`);
-          if (el) el.remove();
-
-          userServers = userServers.filter(s => s.id !== activeServerData.id);
-          closeServerSettingsModal();
-          switchToHomeView();
-          showToast(`Você saiu do servidor "${activeServerData.name}".`);
-        } catch (err) {
-          showToast('Erro ao sair do servidor.', false);
-        }
+        loadServerInvites();
       }
     }
 
-    // CONVITES
     async function loadServerInvites() {
       if (!activeServerData) return;
       const container = document.getElementById('invites-list-container');
