@@ -2,57 +2,60 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Transmissão de Tela</title>
+    <title>Teste de Transmissão de Tela</title>
 </head>
 <body>
-    <h1>Exemplo de Transmissão de Tela</h1>
-    <button id="btnStart">Iniciar Transmissão</button>
-    <button id="btnStop" disabled>Parar Transmissão</button>
+    <h2>Teste de Captura de Tela</h2>
+    <button id="btnStart" style="padding: 10px 20px; font-size: 16px;">Iniciar Transmissão</button>
+    <button id="btnStop" style="padding: 10px 20px; font-size: 16px;" disabled>Parar</button>
     <br><br>
-    <video id="videoElement" autoplay playsinline width="800"></video>
+    <p id="status" style="color: red;"></p>
+    <video id="videoElement" autoplay playsinline controls width="600" style="background: #000;"></video>
 
     <script>
-        const videoElement = document.getElementById('videoElement');
         const btnStart = document.getElementById('btnStart');
         const btnStop = document.getElementById('btnStop');
+        const videoElement = document.getElementById('videoElement');
+        const statusText = document.getElementById('status');
         let mediaStream = null;
 
         btnStart.addEventListener('click', async () => {
+            statusText.textContent = "";
             try {
-                // Solicita a captura da tela ao navegador
+                // Tenta capturar a tela
                 mediaStream = await navigator.mediaDevices.getDisplayMedia({
-                    video: { cursor: "always" },
-                    audio: true
+                    video: true,
+                    audio: false
                 });
 
-                // Exibe o fluxo de vídeo no elemento <video>
                 videoElement.srcObject = mediaStream;
-
                 btnStart.disabled = true;
                 btnStop.disabled = false;
 
-                // Detecta quando o usuário clica no botão nativo "Parar de Compartilhar" do navegador
+                // Se o usuário clicar no botão "Parar" nativo do navegador
                 mediaStream.getVideoTracks()[0].onended = () => {
-                    stopSharing();
+                    pararTransmissao();
                 };
+
             } catch (error) {
-                console.error("Erro ao tentar capturar a tela:", error);
+                console.error("Erro capturado:", error);
+                statusText.textContent = "Erro: " + error.name + " - " + error.message;
             }
         });
 
         btnStop.addEventListener('click', () => {
-            stopSharing();
+            pararTransmissao();
         });
 
-        function stopSharing() {
+        function pararTransmissao() {
             if (mediaStream) {
                 mediaStream.getTracks().forEach(track => track.stop());
                 videoElement.srcObject = null;
             }
             btnStart.disabled = false;
             btnStop.disabled = true;
+            statusText.textContent = "Transmissão encerrada.";
         }
     </script>
 </body>
 </html>
-
